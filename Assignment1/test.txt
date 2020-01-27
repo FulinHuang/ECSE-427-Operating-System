@@ -1,0 +1,8 @@
+set y a
+print y
+set asdf and
+set y b
+print asdf
+
+print asdf
+quit

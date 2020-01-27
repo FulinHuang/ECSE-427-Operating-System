@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "interpreter.h"
 #include "shellmemory.h"
 
@@ -18,7 +19,7 @@ int parseInput(char *ui, char str);
 struct MEM* mem;
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
     mem = malloc(sizeof(struct MEM) * MAX_MEM);
     printf("%s", welcome);  //display welcome message
@@ -59,30 +60,28 @@ int main() {
 
 int parseInput (char *ui, char str) {
     int size = 300;
-    char tmp[size];
     char *words[size];
 
-    int a, b;
+    int a;
     int w = 0;
     for (a = 0; ui[a] == ' ' && a < MAX_INPUT; a++);  //skip white spaces
     char *token = strtok(ui, " ");
-    int c = 0;
     while (ui[a] != '\0' && a < MAX_INPUT && token) {
 
         //remove \t before a string
         int j = 0;
+        bool valid = false;
         for (int k = 0; k < strlen(token); k++) {
             if(token[k] != '\t' && token[k] != '\n' && token[k] != '\r' && token[k] != '\0' && token[k] != ' ') {
+                valid = true;
                 token[j++] = token[k];
             }
         }
-        token[j] = '\0';
+        if (valid) {
+            token[j] = '\0';
+        }
 
-//        for (b = 0, c = 0; newToken[c] != '\n' && newToken[c] != '\r' && newToken[c] != '\0' && newToken[c] != '\t' && newToken[c] != ' ' && a < MAX_INPUT; b++, c++) {
-//            tmp[b] = newToken[c];
-//        }
-//        tmp[b] = '\0';
-//        words[w] = strdup(tmp);
+
         words[w] = strdup(token);
         w++;
         token = strtok(NULL, " ");

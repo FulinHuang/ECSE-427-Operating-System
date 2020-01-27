@@ -36,6 +36,7 @@ int interpreter (char **words, char str, struct MEM *mem) {
     //quit command
     if (strcmp(words[0], "quit") == 0) {
         valid = true;
+        printf("%s", "Bye!\n");
         errorCode = -1;
     }
 
@@ -46,13 +47,7 @@ int interpreter (char **words, char str, struct MEM *mem) {
             errorCode = 2;
         }
         else {
-//            char *value = (char*) malloc(100*sizeof(char));
-//            strcat(value, words[2]);
-//            int j;
-//            for (j = 3; j < 300 && words[j] != NULL; j ++) {
-//                strcat(value, " ");
-//                strcat(value, words[j]);
-//            }
+
             char *var = words[1];
             char *value = words[2];
             errorCode = setValue(words, mem, value, var);
@@ -81,6 +76,12 @@ int interpreter (char **words, char str, struct MEM *mem) {
             fileName = words[1];
             errorCode = readFile(fileName);
         }
+    }
+
+    if (strcmp(words[0], "\n") == 0) {
+        valid = true;
+        printf("%s", "\n");
+        errorCode = 0;
     }
 
     if (!valid) {
@@ -113,6 +114,10 @@ int readFile (char *fileName) {
                     fclose(p);
                     return errorCode;
                 }
+            }
+            else {
+                printf("%s", "\n");
+                errorCode = 0;
             }
 //            fgets(line, MAX_NUM-1, p);
 
