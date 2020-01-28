@@ -7,8 +7,11 @@
 
 #define MAX_NUM 1000
 bool valid;
+bool readFromFile = false;
+FILE *p;
 
 int readFile(char *fileName);
+void closeFile(FILE* p);
 
 // interpreter that read and interpret the commands and return error if needed
 int interpreter (char **words, char str, struct MEM *mem) {
@@ -36,8 +39,14 @@ int interpreter (char **words, char str, struct MEM *mem) {
     //quit command
     if (strcmp(words[0], "quit") == 0) {
         valid = true;
-        printf("%s", "Bye!\n");
-        errorCode = -1;
+        if (!readFromFile) {
+            errorCode = -1;
+            printf("%s", "Bye!\n");
+        } else {
+            readFromFile = false;
+            closeFile(p);
+        }
+
     }
 
     //set VAR STRING command
@@ -74,7 +83,9 @@ int interpreter (char **words, char str, struct MEM *mem) {
         }
         else {
             fileName = words[1];
+
             errorCode = readFile(fileName);
+
         }
     }
 
@@ -97,36 +108,46 @@ int readFile (char *fileName) {
     int errorCode = 0;
     char line [MAX_NUM];
 
-    FILE *p = fopen(fileName, "rt");    //open file
+    p = fopen(fileName, "rt");    //open file
     if (p == NULL) {
         errorCode = 3;
         return errorCode;
     }
+    readFromFile = true;
 
     //operate on the opened file
 //    fgets(line, MAX_NUM - 1, p);
     char str = line[MAX_NUM-1];
-    while ( fgets(line, MAX_NUM - 1, p) != NULL) {  //continue if it is not end of the file
+    while (fgets(line, MAX_NUM - 1, p) != NULL) {  //continue if it is not end of the file
 
             if (strcmp(line, "\n") != 0) {
                 errorCode = parseInput(line, str);
                 if (errorCode != 0) {
-                    fclose(p);
-                    return errorCode;
+
+                    if (errorCode == 5) { //continue to read script if variable not found
+                        printf("%s", "Variable does not exist\n");
+                    } else {            // in other cases, just terminate the script
+                        fclose(p);
+                        return errorCode;
+                    }
                 }
             }
-            else {
+            else {   // deal with empty line
                 printf("%s", "\n");
                 errorCode = 0;
             }
 //            fgets(line, MAX_NUM-1, p);
 
     }
+
     fclose(p);
 
-
-
     return errorCode;
+}
+
+void closeFile(FILE* p) {
+    fclose(p);
+
 }
 
 

@@ -21,13 +21,13 @@ int setValue(char **words, struct MEM* mem, char *value, char *var) {
 
     if (exist == true) {  //var is already exist
         mem[n].value = value;
+        errorCode = 0;
     }
     else {
         int i;
         for (i = 0; mem[i].var != NULL; i++);
         if (i >= MAX_MEM) {
             errorCode = 4;
-            return errorCode;
         }
         mem[i].var = strdup(var);
         mem[i].value = strdup(value);

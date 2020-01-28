@@ -37,25 +37,25 @@ int main(int argc, char *argv[]) {
         if (errorCode == 1) {
             printf("%s", "User input is more than 1000!\n");
         }
-        else if (errorCode == -1) {
+        if (errorCode == -1) {
             exit(99);
         }
-        else if (errorCode == 2) {
+        if (errorCode == 2) {
             printf("%s", "Unknown command\n");
         }
-        else if (errorCode == 3) {
+        if (errorCode == 3) {
             printf("%s", "Script not found\n");
         }
-        else if (errorCode == 4) {
+        if (errorCode == 4) {
             printf("%s", "Memory size has exceeded maximum capacity\n");
         }
-        else if (errorCode == 5) {
+        if (errorCode == 5) {
             printf("%s", "Variable does not exist\n");
         }
-        else if (errorCode == 0){}
 
 
     }
+
 }
 
 int parseInput (char *ui, char str) {
@@ -64,9 +64,9 @@ int parseInput (char *ui, char str) {
 
     int a;
     int w = 0;
-    for (a = 0; ui[a] == ' ' && a < MAX_INPUT; a++);  //skip white spaces
+    for (a = 0; ui[a] == ' ' && a < size; a++);  //skip white spaces
     char *token = strtok(ui, " ");
-    while (ui[a] != '\0' && a < MAX_INPUT && token) {
+    while (ui[a] != '\0' && a < size && token) {
 
         //remove \t before a string
         int j = 0;
@@ -87,9 +87,12 @@ int parseInput (char *ui, char str) {
         token = strtok(NULL, " ");
 
     }
+
     for (w = w; w < size - 1; w++) {
         words[w] = NULL;
     }
+
+
 
     return interpreter(words, str, mem);
 
