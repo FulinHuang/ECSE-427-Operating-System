@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <unistd.h>
 #include "interpreter.h"
 #include "shellmemory.h"
 
@@ -34,6 +35,49 @@ int main(int argc, char *argv[]) {
 
         errorCode = parseInput(userInput, str);
 
+//        if (isatty(fileno(stdin))){
+//            printf("%s\n","stdin is connected to a terminal");
+//
+//    }
+//        else {
+//            int c = 0;
+//            int i = 0;
+//            while((c = getchar()) != '\n' && c != EOF){
+//                buffer[i] = (char)c;
+//                printf("%c\n", buffer[i]);
+//                i++;
+//            }
+
+//            int i = 0;
+//            for(i=0; *argv[i] != '\0';i++)
+//            {
+//                argv[i]=NULL;
+//                strcpy(buffer,argv[i+1]);
+//            }
+//            printf("%s\n", buffer);
+
+//            while (scanf("%s", buffer) != EOF) {
+//                printf("%s\n",buffer);
+//            }
+//            printf("%s\n","ASDFSFD");
+
+//            int ch;
+//            do {
+//                ch = fgetc(stdin);
+//                putchar(ch);
+//                            printf("%s\n","ASDFSFD");
+//            } while (ch != EOF);
+
+//
+//            FILE *fp = freopen("input.txt", "r", stdin);
+//            if (fp == NULL ) {
+//                printf("%s", "hi");
+//            }
+
+//         }
+
+
+
         if (errorCode == 1) {
             printf("%s", "User input is more than 1000!\n");
         }
@@ -61,10 +105,25 @@ int main(int argc, char *argv[]) {
 int parseInput (char *ui, char str) {
     int size = 300;
     char *words[size];
+    char tmp[200];
 
     int a;
+    int b;
     int w = 0;
     for (a = 0; ui[a] == ' ' && a < size; a++);  //skip white spaces
+
+
+    while (ui[a] != '\0' && a < size) {
+        for (b = 0; ui[a] != '\0' && ui[a] != ' ' && ui[a] != '\r' && ui[a] != '\t' && ui[a] != '\n' && a < size; a++, b++) {
+            tmp[b] = ui[a];
+        }
+        tmp[b] = '\0';
+
+        words[w] = strdup(tmp);
+        a++; w++;
+    }
+
+    /*  Deal with empty spaces
     char *token = strtok(ui, " ");
     while (ui[a] != '\0' && a < size && token) {
 
@@ -86,7 +145,8 @@ int parseInput (char *ui, char str) {
         w++;
         token = strtok(NULL, " ");
 
-    }
+    }*/
+
 
     for (w = w; w < size - 1; w++) {
         words[w] = NULL;
