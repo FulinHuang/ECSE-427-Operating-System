@@ -8,10 +8,8 @@
 #define MAX_NUM 1000
 bool valid;
 bool readFromFile = false;
-//FILE *p = NULL;
 
 int readFile(char *fileName);
-//void closeFile(FILE* p);
 
 // interpreter that read and interpret the commands and return error if needed
 int interpreter (char **words, char str, struct MEM *mem) {
@@ -40,9 +38,10 @@ int interpreter (char **words, char str, struct MEM *mem) {
     if (strcmp(words[0], "quit") == 0) {
         valid = true;
         if (!readFromFile) {
-            errorCode = -1;
             printf("%s", "Bye!\n");
+            errorCode = -1;
         }
+
     }
 
     //set VAR STRING command
@@ -79,9 +78,7 @@ int interpreter (char **words, char str, struct MEM *mem) {
         }
         else {
             fileName = words[1];
-
             errorCode = readFile(fileName);
-
         }
     }
 
@@ -109,58 +106,42 @@ int readFile (char *fileName) {
         errorCode = 3;
         return errorCode;
     }
-    readFromFile = true;
 
     //operate on the opened file
 //    fgets(line, MAX_NUM - 1, p);
     char str = line[MAX_NUM-1];
-    while (fgets(line, MAX_NUM - 1, p) != NULL) {  //continue if it is not end of the file
-            int a;
-            for (a = 0; line[a] == ' ' && a < MAX_NUM-1; a++);  //skip white spaces
-            if (strcmp(line, "\n") != 0) {
-                if (strcmp(line, "quit") == 0) {
-                    readFromFile = true;
-                    fclose(p);
-                    readFromFile = false;
-                }
-                else {
-                    errorCode = parseInput(line, str);
-                    if (errorCode != 0) {
-                        if (errorCode == 5) { //continue to read script if variable not found
-                            printf("%s", "Variable does not exist\n");
-                        }
-                        else if (errorCode == 2) {
-                            printf("%s", "Unknown command\n");
-                        }
-                        else {            // in other cases, just terminate the script
-                            fclose(p);
-                            return errorCode;
-                        }
-                    }
-                }
+    while ( fgets(line, MAX_NUM - 1, p) != NULL) {  //continue if it is not end of the file
+
+        int a;
+        for (a = 0; line[a] == ' ' && a < MAX_NUM-1; a++);
+        if (strcmp(line, "\n") != 0) {
+
+            if (strcmp(line, "quit") == 0){
+                readFromFile = true;
+                fclose(p);
+                readFromFile = false;
+                return 0;
 
             }
-
-
-            else {   // deal with empty line
-                printf("%s", "\n");
-                errorCode = 0;
+            errorCode = parseInput(line, str);
+            if (errorCode != 0) {
+                if (errorCode == 5) { //continue to read script if variable not found
+                    printf("%s", "Variable does not exist\n");
+                }
+                fclose(p);
+                return errorCode;
             }
+        }
+        else {
+            printf("%s", "\n");
+            errorCode = 0;
+        }
 //            fgets(line, MAX_NUM-1, p);
 
     }
-
     fclose(p);
+
+
 
     return errorCode;
 }
-
-/*
-void closeFile(FILE* p) {
-    fclose(p);
-
-}
- */
-
-
-

@@ -1,14 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
-#include <unistd.h>
 #include "interpreter.h"
 #include "shellmemory.h"
 
 #define MAX_INPUT 1000
 #define MAX_MEM 1000
-
 
 
 char welcome[34] = "Welcome to the Irene Huang shell!\n";
@@ -20,7 +17,7 @@ int parseInput(char *ui, char str);
 struct MEM* mem;
 
 
-int main(int argc, char *argv[]) {
+int main() {
 
     mem = malloc(sizeof(struct MEM) * MAX_MEM);
     printf("%s", welcome);  //display welcome message
@@ -35,65 +32,22 @@ int main(int argc, char *argv[]) {
 
         errorCode = parseInput(userInput, str);
 
-//        if (isatty(fileno(stdin))){
-//            printf("%s\n","stdin is connected to a terminal");
-//
-//    }
-//        else {
-//            int c = 0;
-//            int i = 0;
-//            while((c = getchar()) != '\n' && c != EOF){
-//                buffer[i] = (char)c;
-//                printf("%c\n", buffer[i]);
-//                i++;
-//            }
-
-//            int i = 0;
-//            for(i=0; *argv[i] != '\0';i++)
-//            {
-//                argv[i]=NULL;
-//                strcpy(buffer,argv[i+1]);
-//            }
-//            printf("%s\n", buffer);
-
-//            while (scanf("%s", buffer) != EOF) {
-//                printf("%s\n",buffer);
-//            }
-//            printf("%s\n","ASDFSFD");
-
-//            int ch;
-//            do {
-//                ch = fgetc(stdin);
-//                putchar(ch);
-//                            printf("%s\n","ASDFSFD");
-//            } while (ch != EOF);
-
-//
-//            FILE *fp = freopen("input.txt", "r", stdin);
-//            if (fp == NULL ) {
-//                printf("%s", "hi");
-//            }
-
-//         }
-
-
-
         if (errorCode == 1) {
             printf("%s", "User input is more than 1000!\n");
         }
-        if (errorCode == -1) {
+        else if (errorCode == -1) {
             exit(99);
         }
-        if (errorCode == 2) {
+        else if (errorCode == 2) {
             printf("%s", "Unknown command\n");
         }
-        if (errorCode == 3) {
+        else if (errorCode == 3) {
             printf("%s", "Script not found\n");
         }
-        if (errorCode == 4) {
+        else if (errorCode == 4) {
             printf("%s", "Memory size has exceeded maximum capacity\n");
         }
-        if (errorCode == 5) {
+        else if (errorCode == 5) {
             printf("%s", "Variable does not exist\n");
         }
 
