@@ -1,8 +1,8 @@
 set y a
 print y
 set asdf and
-set y b
-print asdf
+set y “123 456”
+print z
 
 print asdf
 quit

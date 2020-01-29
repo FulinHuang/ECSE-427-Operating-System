@@ -17,7 +17,6 @@ char userInput[MAX_INPUT];
 int parseInput(char *ui, char str);
 struct MEM* mem;
 
-
 int main() {
 
     mem = malloc(sizeof(struct MEM) * MAX_MEM);
@@ -71,7 +70,7 @@ int parseInput (char *ui, char str) {
     int w = 0;
     for (a = 0; ui[a] == ' ' && a < size; a++);  //skip white spaces
 
-
+    /* Does not deal with empty spaces between the command*/
     while (ui[a] != '\0' && a < size) {
         for (b = 0; ui[a] != '\0' && ui[a] != ' ' && ui[a] != '\r' && ui[a] != '\t' && ui[a] != '\n' && a < size; a++, b++) {
             tmp[b] = ui[a];
@@ -82,7 +81,8 @@ int parseInput (char *ui, char str) {
         a++; w++;
     }
 
-    /*  Deal with empty spaces
+    /*  Deal with empty spaces */
+    /*
     char *token = strtok(ui, " ");
     while (ui[a] != '\0' && a < size && token) {
 
@@ -110,8 +110,6 @@ int parseInput (char *ui, char str) {
     for (w = w; w < size - 1; w++) {
         words[w] = NULL;
     }
-
-
 
     return interpreter(words, str, mem);
 

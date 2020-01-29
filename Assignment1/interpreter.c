@@ -40,6 +40,9 @@ int interpreter (char **words, char str, struct MEM *mem) {
         if (!readFromFile) {
             printf("%s\n", "Bye!");
             errorCode = -1;
+            return errorCode;
+        } else {
+            readFromFile = false;
         }
 
     }
@@ -82,9 +85,9 @@ int interpreter (char **words, char str, struct MEM *mem) {
         }
     }
 
-    if (strcmp(words[0], "\n") == 0) {
+    if (strcmp(words[0], "\n") == 0 || strcmp(words[0], "") == 0) {
         valid = true;
-        printf("%s", "\n");
+        printf("%s", "");
         errorCode = 0;
     }
 
@@ -116,7 +119,7 @@ int readFile (char *fileName) {
         for (a = 0; line[a] == ' ' && a < MAX_NUM-1; a++);
         if (strcmp(line, "\n") != 0) {
 
-            if (strcmp(line, "quit") == 0){
+            if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0){
                 readFromFile = true;
                 fclose(p);
                 readFromFile = false;
@@ -128,8 +131,11 @@ int readFile (char *fileName) {
                 if (errorCode == 5) { //continue to read script if variable not found
                     printf("%s", "Variable does not exist\n");
                 }
-                fclose(p);
-                return errorCode;
+                else {
+                    fclose(p);
+                    return errorCode;
+                }
+
             }
         }
         else {
