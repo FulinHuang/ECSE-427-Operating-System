@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 #include "interpreter.h"
 #include "shellmemory.h"
 
@@ -27,6 +28,10 @@ int main() {
 
         printf("%s", prompt);
         fgets(userInput, MAX_INPUT - 1, stdin);
+
+        if (!isatty(fileno(stdin))){
+            printf("%s",userInput);
+        }
 
         char str = userInput[MAX_INPUT-1];
 

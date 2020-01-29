@@ -38,7 +38,7 @@ int interpreter (char **words, char str, struct MEM *mem) {
     if (strcmp(words[0], "quit") == 0) {
         valid = true;
         if (!readFromFile) {
-            printf("%s", "Bye!\n");
+            printf("%s\n", "Bye!");
             errorCode = -1;
         }
 
