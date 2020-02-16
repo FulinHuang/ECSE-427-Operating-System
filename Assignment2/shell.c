@@ -5,10 +5,11 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-int main(int argc, const char *argv[])
+int shellUI()
 {
-    printf("Welcome to the <your name goes here> shell!\n"
-           "Version 1.0 Created January 2020\n");
+    printf("Kernel 1.0 loaded!\n"
+           "Welcome to the Irene's shell!\n"
+           "Shell version 2.0 Updated Februray 2020\n");
 
     shell_memory_initialize();
 
