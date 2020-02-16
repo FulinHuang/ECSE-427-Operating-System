@@ -223,6 +223,19 @@ int interpret(char *raw_input)
         return result;
     }
 
+    if (strcmp(tokens[0], "exec") == 0) {
+        if (tokens[1] == NULL || tokens[2] == NULL || tokens[3] == NULL) {
+            printf("exec: Malformed command\n");
+            free(tokens);
+        }
+        if (strcmp(tokens[1], tokens[2]) == 0 || strcmp(tokens[1], tokens[3]) == 0) {
+            printf("%s, %s, %s", "Error: Script ", tokens[1], " already loaded");
+        }
+        else if (strcmp(tokens[2], tokens[3]) == 0) {
+            printf("%s, %s, %s", "Error: Script ", tokens[2], " already loaded");
+        }
+    }
+
     printf("Unrecognized command \"%s\"\n", tokens[0]);
     free(tokens);
     return 1;
