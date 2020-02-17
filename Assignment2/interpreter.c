@@ -1,10 +1,13 @@
 #include "interpreter.h"
 #include "shellmemory.h"
+#include "ram.h"
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+
+#define BUFFER 1000
 
 char **tokenize(char *str)
 {
@@ -144,12 +147,13 @@ int print(const char *key)
     const char *value = shell_memory_get(key);
     if (value == NULL)
     {
-        printf("print: Undefiend value.\n");
+        printf("print: Undefined value.\n");
         return 1;
     }
     printf("%s\n", value);
     return 0;
 }
+
 
 int interpret(char *raw_input)
 {
@@ -228,11 +232,19 @@ int interpret(char *raw_input)
             printf("exec: Malformed command\n");
             free(tokens);
         }
-        if (strcmp(tokens[1], tokens[2]) == 0 || strcmp(tokens[1], tokens[3]) == 0) {
+        else if (strcmp(tokens[1], tokens[2]) == 0 || strcmp(tokens[1], tokens[3]) == 0) {
             printf("%s, %s, %s", "Error: Script ", tokens[1], " already loaded");
         }
         else if (strcmp(tokens[2], tokens[3]) == 0) {
             printf("%s, %s, %s", "Error: Script ", tokens[2], " already loaded");
+        }
+        else {
+            char *ram[BUFFER];
+            int* start = 0;
+            int* end = 0;
+            for (int i = 1; i < 4; i++) {
+                loadToRam(*ram, tokens[1], start, end);
+            }
         }
     }
 
