@@ -1,10 +1,11 @@
 #ifndef RAM_H
 #define RAM_H
+#include <stdio.h>
 
 #define BUFFER 1000
 
 char *ram[BUFFER];
 
-void loadToRam(char *fileName, int* start, int* end);
+void addToRAM(FILE *p, int* start, int* end);
 
 #endif

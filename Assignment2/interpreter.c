@@ -1,6 +1,5 @@
-#include "interpreter.h"
 #include "shellmemory.h"
-#include "ram.h"
+#include "kernel.h"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -228,23 +227,29 @@ int interpret(char *raw_input)
     }
 
     if (strcmp(tokens[0], "exec") == 0) {
-        if (tokens[1] == NULL || tokens[2] == NULL || tokens[3] == NULL) {
+        if (tokens[1] == NULL && tokens[2] == NULL && tokens[3] == NULL) {
             printf("exec: Malformed command\n");
             free(tokens);
+            return 1;
         }
         else if (strcmp(tokens[1], tokens[2]) == 0 || strcmp(tokens[1], tokens[3]) == 0) {
             printf("%s, %s, %s", "Error: Script ", tokens[1], " already loaded");
+            free(tokens);
+            return 1;
         }
         else if (strcmp(tokens[2], tokens[3]) == 0) {
             printf("%s, %s, %s", "Error: Script ", tokens[2], " already loaded");
+            free(tokens);
+            return 1;
         }
         else {
-
-            int start = 0;
-            int end = 0;
-            for (int i = 1; i < 4; i++) {
-                loadToRam(tokens[i], &start, &end);
-            }
+           for (int i = 1; i < 4; i++) {
+               if (tokens[i]!= NULL) {
+                   myinit(tokens[i]);
+               }
+           }
+           free(tokens);
+           return 0;
         }
     }
 
