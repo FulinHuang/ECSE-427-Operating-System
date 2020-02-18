@@ -7,9 +7,8 @@
 
 void addToRAM(FILE* p, int* start, int* end) {
 
-    int startPos = 0;
-     *start = *end;
-     startPos = *start;
+     int startPos = *end + 1;
+     *start = startPos;
 
     char buffer[MAX_NUM];
     while (fgets(buffer, MAX_NUM, p) != NULL) {
@@ -22,18 +21,17 @@ void addToRAM(FILE* p, int* start, int* end) {
 
         //TODO: Check validity
         buffer[strcspn(buffer, "\n")] = '\0';
-        ram[*start] = strdup(buffer);
+        ram[startPos] = strdup(buffer);
         startPos++;
-        *start = startPos;
 
     }
-    //TODO: When program has finish executing, ram[k] = NULL
-    //TODO: Solve problem for RAM: empty one after storing a line
 
     for (int i =*end;i<startPos;i++) {
         printf("%s\n", ram[i]);
     }
 
-    *end = *start;
+    *end = startPos-1;
+
+
     fclose(p);
 }

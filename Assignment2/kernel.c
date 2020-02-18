@@ -12,7 +12,7 @@ PCB *tail = NULL;
 void addToReady(PCB* pcb);
 
 int start = 0;
-int end = 0;
+int end = -1;
 
 int main() {
     shellUI();
