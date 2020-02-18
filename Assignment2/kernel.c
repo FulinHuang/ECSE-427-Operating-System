@@ -6,6 +6,9 @@
 #include "pcb.h"
 #include "cpu.h"
 
+PCB *head = NULL;
+PCB *tail = NULL;
+
 void addToReady(PCB* pcb);
 
 int start = 0;
@@ -25,16 +28,25 @@ void myinit(char *filename){
     else {
         addToRAM(p, &start, &end);               // Add source code to cells in RAM
 
-//        PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
+        PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
 
-//        addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
+        addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
     }
-
-
 
 }
 
 void addToReady(PCB* pcb) {
+
+    if (head == NULL) {
+        head = pcb;
+        tail = pcb;
+        printf("%s\n", "Successfully add to Queue");
+    }
+    else {
+        tail->next = pcb;   // update linked list
+        tail = pcb;
+        printf("%s\n", "Successfully add to Queue");
+    }
 
 }
 
