@@ -239,11 +239,11 @@ int interpret(char *raw_input)
             printf("%s, %s, %s", "Error: Script ", tokens[2], " already loaded");
         }
         else {
-            char *ram[BUFFER];
-            int* start = 0;
-            int* end = 0;
+
+            int start = 0;
+            int end = 0;
             for (int i = 1; i < 4; i++) {
-                loadToRam(*ram, tokens[1], start, end);
+                loadToRam(tokens[i], &start, &end);
             }
         }
     }

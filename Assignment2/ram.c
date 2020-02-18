@@ -1,15 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "ram.h"
 
 #define BUFFER 1000
 #define MAX_NUM 100
 
-int startPos = 0;
 
-void loadToRam(char* ram, char *fileName, int* start, int* end) {
+void loadToRam(char *fileName, int* start, int* end) {
 
-    *start = startPos;
+     int startPos = 0;
+     startPos = *end;
 
     FILE *p = fopen(fileName, "rt");    //open file
     if (p == NULL) {
@@ -20,12 +21,18 @@ void loadToRam(char* ram, char *fileName, int* start, int* end) {
     while (fgets(buffer, MAX_NUM, p) != NULL) {
 
         if (feof(p)) {break;}
+        else if (startPos == BUFFER && !feof(p)) {
+            printf("%s\n", "Reach maximum storage!");
+            fclose(p);
+        }
 
         //TODO: Check validity
         ram[startPos] = strdup(buffer);
         startPos++;
     }
+    //TODO: When program has finish executing, ram[k] = NULL
 
+    *start = startPos;
     *end = startPos;
     fclose(p);
 }
