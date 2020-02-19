@@ -19,8 +19,11 @@ PCB* makePCB(int start, int end) {  //creat node
         printf("%s%d\n", "end is ", pcb->end);
         printf("%s\n", "Successfully make PCB");
 
+        //TODO: PC update after quanta finish
+
         return pcb;
     }
-
-
 }
+
+
+

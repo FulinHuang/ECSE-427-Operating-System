@@ -248,6 +248,7 @@ int interpret(char *raw_input)
                    myinit(tokens[i]);
                }
            }
+           scheduler();
            free(tokens);
            return 0;
         }

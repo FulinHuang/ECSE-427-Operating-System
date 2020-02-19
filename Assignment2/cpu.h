@@ -1,11 +1,17 @@
 #ifndef CPU_H
 #define CPU_H
 
-typedef struct CPU {
+#include "pcb.h"
+
+struct CPU {
     int IP;
-    int IR[1000];
+    char IR[1000];
     int quanta;
-} CPU;
+} cpu;
+
+void initializeCPU();
+
+void setCPU_IP(PCB *pcb);
 
 void run(int quanta);
 
