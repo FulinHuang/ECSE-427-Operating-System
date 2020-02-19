@@ -8,8 +8,8 @@ typedef struct PCB{
     struct PCB *next;
 }PCB;
 
-
-
 PCB* makePCB(int start, int end);
+
+void terminatePCB(PCB * pcb);
 
 #endif

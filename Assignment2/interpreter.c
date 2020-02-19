@@ -104,7 +104,7 @@ int quit()
     return 0;
 }
 
-int run(const char *path)
+int runScript(const char *path)
 {
     FILE *file = fopen(path, "r");
     if (file == NULL)
@@ -181,9 +181,9 @@ int interpret(char *raw_input)
             free(tokens);
             return 1;
         }
-        if (in_file_flag == 0) {
-            free(raw_input);
-        }
+//        if (in_file_flag == 0) {
+//            free(raw_input);
+//        }
         free(tokens);
         return quit();
     };
@@ -221,7 +221,7 @@ int interpret(char *raw_input)
             printf("run: Malformed command\n");
             free(tokens);
         }
-        int result = run(tokens[1]);
+        int result = runScript(tokens[1]);
         free(tokens);
         return result;
     }
@@ -232,12 +232,13 @@ int interpret(char *raw_input)
             free(tokens);
             return 1;
         }
-        else if (strcmp(tokens[1], tokens[2]) == 0 || strcmp(tokens[1], tokens[3]) == 0) {
+        else if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0) ||
+        (tokens[1] != NULL && tokens[3] != NULL && strcmp(tokens[1], tokens[3]) == 0)) {
             printf("%s, %s, %s", "Error: Script ", tokens[1], " already loaded");
             free(tokens);
             return 1;
         }
-        else if (strcmp(tokens[2], tokens[3]) == 0) {
+        else if (tokens[2]!=NULL && tokens[3]!= NULL && strcmp(tokens[2], tokens[3]) == 0) {
             printf("%s, %s, %s", "Error: Script ", tokens[2], " already loaded");
             free(tokens);
             return 1;

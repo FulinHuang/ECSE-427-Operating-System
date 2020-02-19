@@ -1,4 +1,3 @@
-#include <stdlib.h>
 #include <stdio.h>
 
 #include "shell.h"
@@ -55,7 +54,7 @@ PCB* getPCBfromReady(){
         pcb = head;
         head = head->next;
         if (head == NULL) {     // If nothing left in the Ready Queue, assign head and tail as NULL
-            tail = NULL;
+            tail = NULL;            //TODO: terminate program?
         }
         pcb->next = NULL;
     }
@@ -63,15 +62,34 @@ PCB* getPCBfromReady(){
     return pcb;
 }
 
+
 void scheduler() {
 
     initializeCPU();                // initialize cpu if it is not yet been initialized
 
-    PCB* pcb = getPCBfromReady();  // get first PCB from the ready queue
+    while (head != NULL) {
+        PCB* pcb = getPCBfromReady();  // get first PCB from the ready queue
 
-    if (pcb != NULL) {
-        setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
-        run(cpu.quanta);           //
+        if (pcb != NULL) {
+            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
+            int quanta = 2;
+            run(quanta);
+            printf("end is % d\n", pcb->end+1);
+            if (cpu.IP == pcb ->end+1) {          // program finish
+                // program terminate (Remove from Ready Queue)
+                printf("%s\n", "Trying to terminate PCB ...");
+                terminatePCB(pcb);
+
+            }
+            else if (cpu.IP < pcb->end+1) {       // program not finish
+                pcb->PC = cpu.IP;  // update PCB PC  pointer
+                addToReady(pcb);
+                // pcb place at the tail of the ready queue
+            }
+
+            //TODO :WHERe to check if all programs are terminate ?
+    }
+
     }
 
 
