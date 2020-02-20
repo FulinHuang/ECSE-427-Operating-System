@@ -11,8 +11,6 @@
 
 bool quitbool = true;
 
-PCB* temp;
-
 void initializeCPU() {
     if (cpu.quanta != 2) {   // if cpu is not yet been initialized
         printf("%s\n", "CPU is null!");
@@ -26,7 +24,6 @@ void initializeCPU() {
 //  It copies the PC from the PCB into the IP of the CPU
 void setCPU_IP(PCB *pcb) {
     cpu.IP = pcb->PC;
-    temp = pcb;
 }
 
 void setQuitProgram(bool value) {
@@ -40,9 +37,9 @@ bool getQuitProgram() {
 void run(int quanta) {
     cpu.quanta = quanta;
 
-    while (cpu.quanta >= 0 && cpu.IP <= temp->end+1) {
+    while (cpu.quanta >= 0) {
 //                printf("%s\n", ram[cpu.IP]);
-        if (cpu.quanta == 0 || cpu.IP == temp->end+1) {break;}
+        if (cpu.quanta == 0) {break;}
         cpu.quanta--;
 
         strcpy(cpu.IR, ram[cpu.IP]);

@@ -73,18 +73,30 @@ void scheduler() {
         if (pcb != NULL) {
             setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
             int quanta = 2;
-            run(quanta);
-            printf("end is % d\n", pcb->end+1);
-            if (cpu.IP == pcb ->end+1) {          // program finish
-                // program terminate (Remove from Ready Queue)
-                printf("%s\n", "Trying to terminate PCB ...");
-                terminatePCB(pcb);
 
+            printf("end is % d\n", pcb->end+1);
+
+            if (cpu.IP+quanta > pcb ->end+1 && cpu.IP != pcb->end+1) {          // program needs less than two quanta to finish
+                printf("%s\n", "less than two quanta!");
+                quanta = 1;
+                run(quanta);
+                if (cpu.IP == pcb->end+1) {        // program is finished
+                    // program terminate (Remove from Ready Queue)
+                    printf("%s\n", "Trying to terminate PCB ...");
+                    terminatePCB(pcb);
+                }
             }
-            else if (cpu.IP < pcb->end+1) {       // program not finish
+            else if (cpu.IP+2 <= pcb->end+1) {       // program needs at least two quantas to finish
+                printf("%s\n", "more than two quanta!");
+                run(quanta);
                 pcb->PC = cpu.IP;  // update PCB PC  pointer
                 addToReady(pcb);
                 // pcb place at the tail of the ready queue
+            }
+            else if (cpu.IP == pcb->end+1) {        // program is finished
+                // program terminate (Remove from Ready Queue)
+                printf("%s\n", "Trying to terminate PCB ...");
+                terminatePCB(pcb);
             }
 
             //TODO :WHERe to check if all programs are terminate ?
