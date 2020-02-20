@@ -1,12 +1,17 @@
 #include "shellmemory.h"
 #include "kernel.h"
+#include "cpu.h"
 
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #define BUFFER 1000
+
+bool quitProgram = false;
+
 
 char **tokenize(char *str)
 {
@@ -96,16 +101,20 @@ int help()
 int quit()
 {
     printf("Bye!\n");
-    if (in_file_flag == 0)
+    if (in_file_flag == 0 && getQuitProgram())
     {
         shell_memory_destory();
         exit(0);
+    }
+    else {
+        setQuitProgram(true);
     }
     return 0;
 }
 
 int runScript(const char *path)
 {
+    quitProgram = true;
     FILE *file = fopen(path, "r");
     if (file == NULL)
     {
@@ -119,6 +128,9 @@ int runScript(const char *path)
         char *line = NULL;
         size_t linecap = 0;
         getline(&line, &linecap, file);
+        if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0 || strcmp(line, "quit\r\n") == 0) {
+            setQuitProgram(false);
+        }
 
         int status = interpret(line);
         free(line);
