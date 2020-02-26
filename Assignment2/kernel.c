@@ -103,9 +103,10 @@ void scheduler() {
             }
 
             //TODO :WHERe to check if all programs are terminate ?
-    }
+        }
 
     }
+
 
 
     /**
@@ -130,5 +131,6 @@ void terminteAll() {
         PCB* pcb = getPCBfromReady();
         terminatePCB(pcb);
     }
+
 
 }

@@ -130,10 +130,12 @@ int runScript(const char *path)
     {
         char *line = NULL;
         size_t linecap = 0;
-        getline(&line, &linecap, file);
-        if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0 || strcmp(line, "quit\r\n") == 0) {
-            setQuitProgram(false);
-        }
+        //if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0 || strcmp(line, "quit\r\n") == 0) {
+        //    setQuitProgram(false);
+        //}
+
+        if (getline(&line, &linecap, file) == -1)
+            break;
 
         int status = interpret(line);
         free(line);
@@ -205,6 +207,7 @@ int interpret(char *raw_input)
 
     if (strcmp(tokens[0], "set") == 0)
     {
+
         if (!(tokens[1] != NULL && tokens[2] != NULL && tokens[3] == NULL))
         {
             printf("set: Malformed command\n");
@@ -242,48 +245,138 @@ int interpret(char *raw_input)
     }
 
     if (strcmp(tokens[0], "exec") == 0) {
-        if (tokens[1] == NULL && tokens[2] == NULL && tokens[3] == NULL) {
+        int i = 1;
+        int count = 0;
+        while (tokens[i] != NULL) {
+            count++;
+            i++;
+        }
+        if (count == 0) {       // no file
             printf("exec: Malformed command\n");
             free(tokens);
             return 1;
         }
-        else if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0) ||
-        (tokens[1] != NULL && tokens[3] != NULL && strcmp(tokens[1], tokens[3]) == 0)) {
-            printf("Error: Script %s already loaded\n", tokens[1]);
-            free(tokens);
-            return 1;
+        else if (count == 1){   // one file
+            int valid;
+            valid = myinit(tokens[1]);
+            if (valid == 0) {
+                scheduler();
+                free(tokens);
+                return 0;
+            } else {
+                terminteAll();
+                free(tokens);
+                return 1;
+            }
+
         }
-        else if (tokens[2]!=NULL && tokens[3]!= NULL && strcmp(tokens[2], tokens[3]) == 0) {
-            printf("Error: Script %s already loaded\n", tokens[2]);
-            free(tokens);
-            return 1;
+        else if (count == 2) {
+            if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0)) { // same file name
+                printf("Error: Script %s already loaded\n", tokens[1]);
+                free(tokens);
+                return 1;
+            }
+            else {
+                int valid = -1;
+                for (int j = 1; j < 3; j++) {
+                    valid = myinit(tokens[j]);
+                    if (valid == -1){
+                        break;
+                    }
+                }
+                if (valid == -1) {
+                    terminteAll();
+                    free(tokens);
+                    return 1;
+                } else {
+                    scheduler();
+                    free(tokens);
+                    return 0;
+                }
+            }
         }
-        else if (tokens[1]!=NULL && tokens[2]!=NULL &&tokens[3]!=NULL && tokens[4]!=NULL) {
+        else if (count == 3) {
+            if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0) ||
+            (tokens[1] != NULL && tokens[3] != NULL && strcmp(tokens[1], tokens[3]) == 0)) {
+                printf("Error: Script %s already loaded\n", tokens[1]);
+                free(tokens);
+                return 1;
+            }
+            else if (tokens[2]!=NULL && tokens[3]!= NULL && strcmp(tokens[2], tokens[3]) == 0) {
+                printf("Error: Script %s already loaded\n", tokens[2]);
+                free(tokens);
+                return 1;
+            }
+            else {
+                int valid = -1;
+                for (int j = 1; j < 4; j++) {
+                    valid = myinit(tokens[j]);
+                    if (valid == -1){break; }
+                }
+                if (valid == -1) {
+                    terminteAll();
+                    free(tokens);
+                    return 1;
+                } else {
+                    scheduler();
+                    free(tokens);
+                    return 0;
+                }
+            }
+        }
+        else if (count > 3) {
             printf("Cannot load more than three scripts at once!\n");
             free(tokens);
             return 1;
         }
-        else {
-            int valid = -1;
-           for (int i = 1; i < 4; i++) {
-               if (tokens[i]!= NULL) {
-                   valid = myinit(tokens[i]);
-                   if (valid == -1) {
-                       break;
-                   }
-               }
-           }
-           if (valid == 0) {
-               scheduler();
-           }
-           else {
-               //TODO: Check if there 's any pcb in the list. Remove them
-               terminteAll();
-               return 1;
-           }
-           free(tokens);
-           return 0;
-        }
+
+
+//        if (tokens[1] == NULL && tokens[2] == NULL && tokens[3] == NULL) {
+//            printf("exec: Malformed command\n");
+//            free(tokens);
+//            return 1;
+//        }
+//        // exec scrip1.txt
+//        // tokens[0] = exec
+//        // tokens[1] = script1.txt
+//        // tokens[2] = NULL
+//
+//        else if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0) ||
+//        (tokens[1] != NULL && tokens[3] != NULL && strcmp(tokens[1], tokens[3]) == 0)) {
+//            printf("Error: Script %s already loaded\n", tokens[1]);
+//            // free(tokens);
+//            return 1;
+//        }
+//        else if (tokens[2]!=NULL && tokens[3]!= NULL && strcmp(tokens[2], tokens[3]) == 0) {
+//            printf("Error: Script %s already loaded\n", tokens[2]);
+//            free(tokens);
+//            return 1;
+//        }
+//        else if (tokens[1]!=NULL && tokens[2]!=NULL &&tokens[3]!=NULL && tokens[4]!=NULL) {
+//            printf("Cannot load more than three scripts at once!\n");
+//            free(tokens);
+//            return 1;
+//        }
+//        else {
+//            int valid = -1;
+//            for (int i = 1; i < 4; i++) {
+//               if (tokens[i]!= NULL) {
+//                   valid = myinit(tokens[i]);
+//                   if (valid == -1) {
+//                       break;
+//                   }
+//               }
+//            }
+//            if (valid == 0) {
+//               scheduler();
+//            }
+//            else {
+//               //TODO: Check if there 's any pcb in the list. Remove them
+//               terminteAll();
+//            }
+//            free(tokens);
+//            return 0;
+//        }
     }
 
     printf("Unrecognized command \"%s\"\n", tokens[0]);
