@@ -2,10 +2,12 @@
 #define KERNEL_H
 #include "pcb.h"
 
-void myinit(char *filename);
+int myinit(char *filename);
 
 void scheduler();
 
 PCB *getPCBfromReady();
+
+void terminteAll();
 
 #endif

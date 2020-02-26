@@ -18,11 +18,12 @@ int main() {
 
 }
 
-void myinit(char *filename){
+int myinit(char *filename){
 
     FILE *p = fopen(filename, "rt");
     if (p == NULL) {
-        printf("Script not found.\n");
+        printf("Script not found\n");
+        return -1;
     }
     else {
         addToRAM(p, &start, &end);               // Add source code to cells in RAM
@@ -30,6 +31,8 @@ void myinit(char *filename){
         PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
 
         addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
+
+        return 0;
     }
 
 }
@@ -117,5 +120,15 @@ void scheduler() {
         f. If the program is at the end, then the PCB terminates (as described previously /
         above)
      */
+
+}
+
+// This method will be called if one of the script has load error, then all other processes that has been added to the ready queue
+// will be removed. All instructions in RAM will be removed as well.
+void terminteAll() {
+    while (head != NULL) {
+        PCB* pcb = getPCBfromReady();
+        terminatePCB(pcb);
+    }
 
 }

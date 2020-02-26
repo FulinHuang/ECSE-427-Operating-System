@@ -94,7 +94,10 @@ int help()
            "quit            Exits / terminates the shell with \"Bye!\"\n"
            "set VAR STRING  Assigns a value to shell memory\n"
            "print VAR       Displays the STRING assigned to VAR\n"
-           "run SCRIPT.TXT  Executes the file SCRIPT.TXT\n");
+           "run SCRIPT.TXT  Executes the file SCRIPT.TXT\n"
+           "exec p1 p2 p3   Executes concurrent programs\n"
+           "                $ exec prog.txt prog2.txt\n");
+
     return 0;
 }
 
@@ -246,22 +249,38 @@ int interpret(char *raw_input)
         }
         else if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0) ||
         (tokens[1] != NULL && tokens[3] != NULL && strcmp(tokens[1], tokens[3]) == 0)) {
-            printf("%s, %s, %s", "Error: Script ", tokens[1], " already loaded");
+            printf("Error: Script %s already loaded\n", tokens[1]);
             free(tokens);
             return 1;
         }
         else if (tokens[2]!=NULL && tokens[3]!= NULL && strcmp(tokens[2], tokens[3]) == 0) {
-            printf("%s, %s, %s", "Error: Script ", tokens[2], " already loaded");
+            printf("Error: Script %s already loaded\n", tokens[2]);
+            free(tokens);
+            return 1;
+        }
+        else if (tokens[1]!=NULL && tokens[2]!=NULL &&tokens[3]!=NULL && tokens[4]!=NULL) {
+            printf("Cannot load more than three scripts at once!\n");
             free(tokens);
             return 1;
         }
         else {
+            int valid = -1;
            for (int i = 1; i < 4; i++) {
                if (tokens[i]!= NULL) {
-                   myinit(tokens[i]);
+                   valid = myinit(tokens[i]);
+                   if (valid == -1) {
+                       break;
+                   }
                }
            }
-           scheduler();
+           if (valid == 0) {
+               scheduler();
+           }
+           else {
+               //TODO: Check if there 's any pcb in the list. Remove them
+               terminteAll();
+               return 1;
+           }
            free(tokens);
            return 0;
         }
