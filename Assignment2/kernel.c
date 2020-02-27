@@ -101,14 +101,10 @@ void scheduler() {
                 printf("%s\n", "Trying to terminate PCB ...");
                 terminatePCB(pcb);
             }
-
-            //TODO :WHERe to check if all programs are terminate ?
         }
 
     }
-
-
-
+    
     /**
      *  a. It checks to see if the CPU is available. This means that the quanta is finished or nothing
      *  is currently assigned to the CPU

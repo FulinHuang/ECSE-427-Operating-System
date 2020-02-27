@@ -26,9 +26,9 @@ void addToRAM(FILE* p, int* start, int* end) {
 
     }
 
-    for (int i =*end+1;i<startPos;i++) {
+//    for (int i =*end+1;i<startPos;i++) {
 //        printf("%s\n", ram[i]);
-    }
+//    }
 
     *end = startPos-1;
 
