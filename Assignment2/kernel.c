@@ -1,12 +1,14 @@
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "shell.h"
 #include "ram.h"
 #include "pcb.h"
 #include "cpu.h"
+#include "kernel.h"
 
-PCB *head = NULL;
-PCB *tail = NULL;
+Ready *head = NULL;
+Ready *tail = NULL;
 
 void addToReady(PCB* pcb);
 
@@ -25,41 +27,56 @@ int myinit(char *filename){
         printf("Script not found\n");
         return -1;
     }
+    else if (getRAMStatus()) {  // RAM is full
+        return -1;
+    }
+
     else {
         addToRAM(p, &start, &end);               // Add source code to cells in RAM
 
-        PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
+        if (!getRAMStatus()) {                      // if RAM is not full
+            PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
 
-        addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
-
+            addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
+        } else {
+            //Remove all instructions from RAM
+            for (int i = 0; i <= BUFFER; i++){
+                ram[i] = NULL;
+            }
+            setRAMStatus(false);
+            start = 0;
+            end = -1;
+            return -1;
+        }
         return 0;
     }
 
 }
 
 void addToReady(PCB* pcb) {
+    Ready *ready = (Ready*) malloc(sizeof(Ready));
+    //create a new node
+    ready->pcb = pcb;
+    ready->next = NULL;
 
     if (head == NULL) {
-        head = pcb;
-        tail = pcb;
-        printf("%s\n", "Successfully add to Queue");
+        head = ready;
+        tail = ready;
     }
     else {
-        tail->next = pcb;   // update linked list
-        tail = pcb;
-        printf("%s\n", "Successfully add to Queue");
+        tail->next = ready;   // update linked list
+        tail = ready;
     }
 }
 
 PCB* getPCBfromReady(){
     PCB* pcb = NULL;
     if (head != NULL) {
-        pcb = head;
+        pcb = head->pcb;
         head = head->next;
         if (head == NULL) {     // If nothing left in the Ready Queue, assign head and tail as NULL
-            tail = NULL;            //TODO: terminate program?
+            tail = NULL;
         }
-        pcb->next = NULL;
     }
 
     return pcb;
@@ -71,53 +88,41 @@ void scheduler() {
     initializeCPU();                // initialize cpu if it is not yet been initialized
 
     while (head != NULL) {
+
+        if (getRAMStatus() == true) {  // If RAM is full, we do not execute any program. Delete everything from RAM
+            terminteAll();
+        }
         PCB* pcb = getPCBfromReady();  // get first PCB from the ready queue
 
         if (pcb != NULL) {
             setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
             int quanta = 2;
 
-            printf("end is % d\n", pcb->end+1);
-
             if (cpu.IP+quanta > pcb ->end+1 && cpu.IP != pcb->end+1) {          // program needs less than two quanta to finish
-                printf("%s\n", "less than two quanta!");
                 quanta = 1;
                 run(quanta);
+
                 if (cpu.IP == pcb->end+1) {        // program is finished
                     // program terminate (Remove from Ready Queue)
-                    printf("%s\n", "Trying to terminate PCB ...");
                     terminatePCB(pcb);
+                    setRAMStatus(false);
                 }
             }
             else if (cpu.IP+2 <= pcb->end+1) {       // program needs at least two quantas to finish
-                printf("%s\n", "more than two quanta!");
                 run(quanta);
                 pcb->PC = cpu.IP;  // update PCB PC  pointer
                 addToReady(pcb);
-                // pcb place at the tail of the ready queue
             }
             else if (cpu.IP == pcb->end+1) {        // program is finished
                 // program terminate (Remove from Ready Queue)
-                printf("%s\n", "Trying to terminate PCB ...");
                 terminatePCB(pcb);
+                setRAMStatus(false);
             }
         }
 
     }
-    
-    /**
-     *  a. It checks to see if the CPU is available. This means that the quanta is finished or nothing
-     *  is currently assigned to the CPU
-        b. It copies the PC from the PCB into the IP of the CPU
-        c. It calls the run(quanta) function within cpu.c to run the script by copying quanta
-        lines of code from ram[] using IP into the IR, which then calls: interpreter(IR)
-        d. This executes quanta instructions from the script or until the script file is at end.
-        e. If the program is not at the end, then the PCB PC pointer is updated with the IP
-        value and the PCB is placed at the tail of the ready queue.
-        f. If the program is at the end, then the PCB terminates (as described previously /
-        above)
-     */
-
+    start = 0;
+    end = -1;
 }
 
 // This method will be called if one of the script has load error, then all other processes that has been added to the ready queue
@@ -126,7 +131,10 @@ void terminteAll() {
     while (head != NULL) {
         PCB* pcb = getPCBfromReady();
         terminatePCB(pcb);
-    }
+        setRAMStatus(false);
+        start = 0;
+        end = -1;
 
+    }
 
 }

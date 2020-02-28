@@ -2,6 +2,11 @@
 #define KERNEL_H
 #include "pcb.h"
 
+typedef struct Ready {
+    PCB* pcb;
+    struct Ready* next;
+}Ready;
+
 int myinit(char *filename);
 
 void scheduler();
