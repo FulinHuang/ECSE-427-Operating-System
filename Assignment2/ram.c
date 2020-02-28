@@ -8,6 +8,7 @@
 
 void addToRAM(FILE* p, int* start, int* end) {
 
+
     reachMax = false;
 
     int startPos = *end + 1;
