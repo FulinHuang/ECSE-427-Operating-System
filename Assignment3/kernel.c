@@ -24,6 +24,18 @@ int kernel() {
 
 void boot() {
 
+    // Initialize every cell of the array to NULL
+    for (int i = 0; i < BUFFER; i++) {
+        ram[i] = NULL;
+    }
+    printf("%s\n", "Every cell of the array is initialized to NULL");
+
+    // Delete the old backing store directory and create a new directory
+    //TODO: check
+    char *rmcommand  = "rmdir BackingStore";
+    system(rmcommand);
+    char *mkcommand = "mkdir BackingStore";
+    system(mkcommand);
 }
 
 int main() {

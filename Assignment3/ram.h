@@ -3,7 +3,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
-#define BUFFER 1000
+// RAM is a global array of 40 strings (modify from 1000 to 40)
+#define BUFFER 40
 
 bool reachMax;
 

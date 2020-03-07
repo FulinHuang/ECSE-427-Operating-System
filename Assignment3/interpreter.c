@@ -1,6 +1,7 @@
 #include "shellmemory.h"
 #include "kernel.h"
 #include "cpu.h"
+#include "memorymanager.h"
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -130,9 +131,6 @@ int runScript(const char *path)
     {
         char *line = NULL;
         size_t linecap = 0;
-        //if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0 || strcmp(line, "quit\r\n") == 0) {
-        //    setQuitProgram(false);
-        //}
 
         if (getline(&line, &linecap, file) == -1)
             break;
@@ -256,73 +254,37 @@ int interpret(char *raw_input)
             free(tokens);
             return 1;
         }
-        else if (count == 1){   // one file
-            int valid;
-            valid = myinit(tokens[1]);
-            if (valid == 0) {
-                scheduler();
-                free(tokens);
-                return 0;
-            } else {
+        else if (count > 0 && count < 4) {
+            int valid = -1;
+            for (int j = 1; j < count+1; j++) {
+                // Deal with File open
+
+                FILE *p = fopen(tokens[j], "rt");
+                if (p == NULL) {
+                    printf("Script not found\n");
+                    break;
+                }
+                else {
+                    int isLaunched = launcher(p, tokens[j]);
+                    if (isLaunched == 1) {
+                        valid = myinit(tokens[j]);
+                    }
+
+                }
+                if (valid == -1){
+                    break;
+                }
+            }
+            if (valid == -1) {
                 terminteAll();
                 free(tokens);
                 return 1;
+            } else {
+                scheduler();
+                free(tokens);
+                return 0;
             }
 
-        }
-        else if (count == 2) {
-            if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0)) { // same file name
-                printf("Error: Script %s already loaded\n", tokens[1]);
-                free(tokens);
-                return 1;
-            }
-            else {
-                int valid = -1;
-                for (int j = 1; j < 3; j++) {
-                    valid = myinit(tokens[j]);
-                    if (valid == -1){
-                        break;
-                    }
-                }
-                if (valid == -1) {
-                    terminteAll();
-                    free(tokens);
-                    return 1;
-                } else {
-                    scheduler();
-                    free(tokens);
-                    return 0;
-                }
-            }
-        }
-        else if (count == 3) {
-            if ((tokens[1]!= NULL && tokens[2]!= NULL && strcmp(tokens[1], tokens[2]) == 0) ||
-            (tokens[1] != NULL && tokens[3] != NULL && strcmp(tokens[1], tokens[3]) == 0)) {
-                printf("Error: Script %s already loaded\n", tokens[1]);
-                free(tokens);
-                return 1;
-            }
-            else if (tokens[2]!=NULL && tokens[3]!= NULL && strcmp(tokens[2], tokens[3]) == 0) {
-                printf("Error: Script %s already loaded\n", tokens[2]);
-                free(tokens);
-                return 1;
-            }
-            else {
-                int valid = -1;
-                for (int j = 1; j < 4; j++) {
-                    valid = myinit(tokens[j]);
-                    if (valid == -1){break; }
-                }
-                if (valid == -1) {
-                    terminteAll();
-                    free(tokens);
-                    return 1;
-                } else {
-                    scheduler();
-                    free(tokens);
-                    return 0;
-                }
-            }
         }
         else if (count > 3) {
             printf("Cannot load more than three scripts at once!\n");
