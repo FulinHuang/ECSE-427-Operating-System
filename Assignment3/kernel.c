@@ -7,9 +7,6 @@
 #include "cpu.h"
 #include "kernel.h"
 
-Ready *head = NULL;
-Ready *tail = NULL;
-
 void addToReady(PCB* pcb);
 
 int start = 0;
@@ -50,17 +47,16 @@ int main() {
 
 int myinit(char *filename){
 
-    FILE *p = fopen(filename, "rt");
-    if (p == NULL) {
-        printf("Script not found\n");
+//    FILE *p = fopen(filename, "rt");
+//    if (p == NULL) {
+//        printf("Script not found\n");
+//        return -1;
+//    }
+    if (getRAMStatus()) {  // RAM is full
         return -1;
     }
-    else if (getRAMStatus()) {  // RAM is full
-        return -1;
-    }
-
     else {
-        addToRAM(p, &start, &end);               // Add source code to cells in RAM
+//        addToRAM(p, &start, &end);               // Add source code to cells in RAM
 
         if (!getRAMStatus()) {                      // if RAM is not full
             PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
@@ -108,6 +104,15 @@ PCB* getPCBfromReady(){
     }
 
     return pcb;
+}
+
+
+// Return the Activate PCB from Ready Queue
+PCB* findCurrentPCB() {
+    PCB* pcb = NULL;
+    if (head != NULL) {
+
+    }
 }
 
 
