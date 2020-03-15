@@ -7,6 +7,9 @@ typedef struct Ready {
     struct Ready* next;
 }Ready;
 
+// start and tail were moved from kernel.c to kernel.h
+extern int start;
+extern int end;
 
 // head and tail were moved from kernel.c to kernel.h
 Ready *head = NULL;

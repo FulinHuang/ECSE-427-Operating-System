@@ -15,6 +15,7 @@ void initializeCPU() {
         cpu.IP = 0;
         cpu.IR[0] = '\0';
         cpu.quanta = 2;
+        cpu.offset = 0;  //TODO: check
     }
 }
 

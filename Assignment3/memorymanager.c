@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "pcb.h"
 #include "ram.h"
@@ -77,14 +78,6 @@ int launcher(FILE *p, char* fileName) {
         }
     }
 
-
-
-    //Our launch paging technique defaults to loading two pages of the program into RAM when it
-    //is first launched. A page is 4 lines of code. If the program has 4 or less lines of code, then only one page is loaded.
-    // If the program has more than 8 lines of code, then only the first
-    //two pages are loaded. To do this, implement the following helper functions that exist in the
-
-
     // launcher() function returns a 1 if it was successful launching the program,
     // otherwise it returns 0.
 
@@ -103,6 +96,9 @@ int countTotalPages(FILE *f) {
             count++;
         }
     }
+    fseek(f, 0, SEEK_SET);
+
+
     fclose(f);
 
     count = count / 4;
@@ -120,6 +116,16 @@ int countTotalPages(FILE *f) {
  */
 void loadPage(int pageNumber, FILE *f, int frameNumber) {
 
+    fseek(f, pageNumber, SEEK_SET);     // place pointer at the correct position
+    int count = 0;
+    char buffer[MAX_NUM];
+    int i = frameNumber;
+    while (count < 4 && fgets(buffer, MAX_NUM, f) != NULL) {
+        buffer[strcspn(buffer, "\n")] = '\0';
+        ram[i] = strdup(buffer);
+        count++;
+        i++;
+    }
 }
 
 /**

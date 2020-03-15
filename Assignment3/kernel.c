@@ -9,8 +9,7 @@
 
 void addToReady(PCB* pcb);
 
-int start = 0;
-int end = -1;
+
 
 int kernel() {
     int error = 0;
@@ -57,7 +56,9 @@ int myinit(char *filename){
     }
     else {
 //        addToRAM(p, &start, &end);               // Add source code to cells in RAM
-
+        //TODO
+        start = 0;
+        end = -1;
         if (!getRAMStatus()) {                      // if RAM is not full
             PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
 
@@ -105,16 +106,6 @@ PCB* getPCBfromReady(){
 
     return pcb;
 }
-
-
-// Return the Activate PCB from Ready Queue
-PCB* findCurrentPCB() {
-    PCB* pcb = NULL;
-    if (head != NULL) {
-
-    }
-}
-
 
 void scheduler() {
 
