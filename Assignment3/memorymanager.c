@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <stdbool.h>
 
 #include "pcb.h"
 #include "ram.h"
@@ -41,7 +42,7 @@ int launcher(FILE *p, char* fileName) {
         // Find frame number
         int frameNumber = findFrame();
         PCB* pcb = head->pcb;
-
+        int victimFrame = -1;
         if (frameNumber == -1) {
 
 //            //Create Page table in RAM
@@ -49,27 +50,31 @@ int launcher(FILE *p, char* fileName) {
 //                pcb->pageTable[i] = NULL;
 //            }
 
-            frameNumber = findVictim(pcb);
+            victimFrame  = findVictim(pcb);
         }
 
         pcb->pages_max = numPages;
+        pcb->PC_page = 0;  // initialize pc_page
+        //TODO: initialize other pcb value ?
+//        pcb->PC = 0;
+//        pcb->pc_offset = 0;
+        loadPage(pcb->PC_page, file, frameNumber);
+        updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
 
-        // TODO: change 0 to pc?
-        loadPage(0, file, frameNumber);
-        // TODO: need to change numPages to current PC later to check where the Pointer is
 
         if (numPages > 1) {
             int frame_number = findFrame();
+            int victim_Frame = -1;
             if (frame_number == -1) {
-                frame_number = findVictim(pcb);
+                victim_Frame = findVictim(pcb);
             }
-            loadPage(1 , file, frame_number);
-
+            pcb->PC_page++;
+            //TODO: update other pcb value ?
+//        pcb->PC = ;
+//        pcb->pc_offset = ;
+            loadPage(pcb->PC_page, file, frame_number);
+            updatePageTable(pcb, pcb->PC_page, frameNumber, victim_Frame);
         }
-
-
-
-
     }
 
 
@@ -126,9 +131,9 @@ int findFrame() {
     //TODO: Check: why no parameter
 //    char buffer[MAX_NUM];
 //    char line = fgets(buffer, MAX_NUM, file);
-    for (int i = 0;i < 10; i++) {
+    for (int i = 0; i < 40; i+=4) {
         if (ram[i] == NULL) {
-            return i;
+            return i/4;
         }
     }
     return -1;
@@ -142,8 +147,18 @@ int findFrame() {
 int findVictim(PCB *p) {
 
     int frameNumber = rand()%10;
+    int count = 0;
 
-    return 0;
+    while (1) {
+        while(count < 10 && frameNumber != p->pageTable[count]) {
+            count++;
+        }
+        if (count < 10) {
+            return frameNumber;
+        }
+        count = 0;
+        frameNumber = (frameNumber+1)%10;
+    }
 }
 
 /**
@@ -156,6 +171,13 @@ int findVictim(PCB *p) {
  */
 int updatePageTable(PCB *p, int pageNumber, int frameNumber, int victimFrame) {
 
-    // p->pageTable[pageNumber] = frameNumber (or = victimFrame).
-    return 0;
+    if (frameNumber == -1) {
+        p->pageTable[pageNumber] = victimFrame;
+        return victimFrame;
+    }
+    else {
+        p->pageTable[pageNumber] = frameNumber;
+        return frameNumber;
+    }
+
 }

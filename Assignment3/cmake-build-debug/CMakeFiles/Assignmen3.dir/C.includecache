@@ -28,24 +28,6 @@ pcb.h
 stdbool.h
 -
 
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/interpreter.c
-shellmemory.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shellmemory.h
-kernel.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
-cpu.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/cpu.h
-stdlib.h
--
-stdint.h
--
-string.h
--
-stdio.h
--
-stdbool.h
--
-
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/interpreter.h
 
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.c
@@ -65,14 +47,6 @@ kernel.h
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
 
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
-pcb.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
-
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/memorymanager.c
-stdlib.h
--
-stdio.h
--
 pcb.h
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
 
@@ -104,29 +78,5 @@ stdio.h
 stdbool.h
 -
 
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shell.c
-interpreter.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/interpreter.h
-shellmemory.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shellmemory.h
-stdio.h
--
-stdint.h
--
-stdlib.h
--
-
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shell.h
-
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shellmemory.c
-shellmemory.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shellmemory.h
-stdint.h
--
-string.h
--
-stdlib.h
--
-
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shellmemory.h
 
