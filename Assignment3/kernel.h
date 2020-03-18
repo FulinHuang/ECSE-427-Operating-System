@@ -15,6 +15,8 @@ extern int end;
 Ready *head = NULL;
 Ready *tail = NULL;
 
+PCB* pcbTable[10];
+
 int myinit(char *filename);
 
 void scheduler();

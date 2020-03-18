@@ -29,7 +29,7 @@ int launcher(FILE *p, char* fileName) {
     // Open the file in the backing store
     char file_dir[40];
     //Get the file path
-    sprintf(file_dir, "%s%s", "BackingStore/", cpCommand);
+    sprintf(file_dir, "%s%s", "BackingStore/", fileName);
     //Open file
     FILE* file = fopen(file_dir, "r");
 
@@ -43,19 +43,25 @@ int launcher(FILE *p, char* fileName) {
         // Find frame number
         int frameNumber = findFrame();
         PCB* pcb = head->pcb;
-        int victimFrame = -1;
+        int victimFrame = 0;
         if (frameNumber == -1) {
 
 //            //Create Page table in RAM
-//            for(int i = 0; i < 10; i++) {
-//                pcb->pageTable[i] = NULL;
-//            }
+////            for(int i = 0; i < 10; i++) {
+////                pcb->pageTable[i] = NULL;
+////            }
 
             victimFrame  = findVictim(pcb);
+            pcbTable[victimFrame] = pcb;
         }
+        else {
+            pcbTable[frameNumber] = pcb;
+        }
+
 
         pcb->pages_max = numPages;
         pcb->PC_page = 0;  // initialize pc_page
+        pcb->filename = fileName;
         //TODO: initialize other pcb value ?
 //        pcb->PC = 0;
 //        pcb->pc_offset = 0;
@@ -63,18 +69,25 @@ int launcher(FILE *p, char* fileName) {
         updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
 
 
+
         if (numPages > 1) {
             int frame_number = findFrame();
-            int victim_Frame = -1;
+            int victim_Frame = 0;
             if (frame_number == -1) {
                 victim_Frame = findVictim(pcb);
+                pcbTable[victim_Frame] = pcb;
+
+            }
+            else {
+                pcbTable[frame_number] = pcb;
+
             }
             pcb->PC_page++;
             //TODO: update other pcb value ?
 //        pcb->PC = ;
 //        pcb->pc_offset = ;
             loadPage(pcb->PC_page, file, frame_number);
-            updatePageTable(pcb, pcb->PC_page, frameNumber, victim_Frame);
+            updatePageTable(pcb, pcb->PC_page, frame_number, victim_Frame);
         }
     }
 
@@ -97,8 +110,6 @@ int countTotalPages(FILE *f) {
         }
     }
     fseek(f, 0, SEEK_SET);
-
-
     fclose(f);
 
     count = count / 4;
@@ -117,15 +128,24 @@ int countTotalPages(FILE *f) {
 void loadPage(int pageNumber, FILE *f, int frameNumber) {
 
     fseek(f, pageNumber, SEEK_SET);     // place pointer at the correct position
-    int count = 0;
-    char buffer[MAX_NUM];
-    int i = frameNumber;
-    while (count < 4 && fgets(buffer, MAX_NUM, f) != NULL) {
-        buffer[strcspn(buffer, "\n")] = '\0';
-        ram[i] = strdup(buffer);
-        count++;
-        i++;
-    }
+    fread(ram[frameNumber], 4, 4, f);
+    start = end + 1;
+    end = start + 4;    //TODO: Check
+
+    printf("%s%d\n", "Start in load page is ", start);
+    printf("%s%d\n", "End in load page is ", end);
+
+//    int count = 0;
+//    char buffer[MAX_NUM];
+//    int i = frameNumber;
+//    while (count < 4 && fgets(buffer, MAX_NUM, f) != NULL) {
+//        buffer[strcspn(buffer, "\n")] = '\0';
+//        ram[i] = strdup(buffer);
+//        count++;
+//        i++;
+//    }
+
+
 }
 
 /**

@@ -15,7 +15,7 @@ void initializeCPU() {
         cpu.IP = 0;
         cpu.IR[0] = '\0';
         cpu.quanta = 2;
-        cpu.offset = 0;  //TODO: check
+        cpu.offset = 0;
     }
 }
 
@@ -35,13 +35,14 @@ bool getQuitProgram() {
 void run(int quanta) {
     cpu.quanta = quanta;
 
-    while (cpu.quanta >= 0) {
+    while (cpu.quanta >= 0 && cpu.offset < 4) {
 
         if (cpu.quanta == 0) {break;}
         cpu.quanta--;
 
         strcpy(cpu.IR, ram[cpu.IP]);
-        cpu.IP++;
+//        cpu.IP++;
+        cpu.offset++;
 
         setQuitProgram(false);
 

@@ -6,10 +6,10 @@
 #include "pcb.h"
 #include "cpu.h"
 #include "kernel.h"
+#include "memorymanager.h"
 
 void addToReady(PCB* pcb);
-
-
+void pageFault(PCB* pcb);
 
 int kernel() {
     int error = 0;
@@ -32,50 +32,30 @@ void boot() {
     system(rmcommand);
     char *mkcommand = "mkdir BackingStore";
     system(mkcommand);
+
 }
 
 int main() {
     int error = 0;
     boot();
     error = kernel();
+
+    // Initialize start and stop
+    start = 0;
+    end = -1;
+
     return error;
 
 }
 
-
-
 int myinit(char *filename){
 
-//    FILE *p = fopen(filename, "rt");
-//    if (p == NULL) {
-//        printf("Script not found\n");
-//        return -1;
-//    }
-    if (getRAMStatus()) {  // RAM is full
-        return -1;
-    }
-    else {
-//        addToRAM(p, &start, &end);               // Add source code to cells in RAM
-        //TODO
-        start = 0;
-        end = -1;
-        if (!getRAMStatus()) {                      // if RAM is not full
-            PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
+    //TODO: change this
 
-            addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
-        } else {
-            //Remove all instructions from RAM
-            for (int i = 0; i <= BUFFER; i++){
-                ram[i] = NULL;
-            }
-            setRAMStatus(false);
-            start = 0;
-            end = -1;
-            return -1;
-        }
-        return 0;
-    }
+    PCB* pcb = makePCB(start, end);         // Create PCB instance using malloc
+    addToReady(pcb);                       // Add PCB to the tail of the Ready Queue
 
+    return 0;
 }
 
 void addToReady(PCB* pcb) {
@@ -113,40 +93,55 @@ void scheduler() {
 
     while (head != NULL) {
 
-        if (getRAMStatus() == true) {  // If RAM is full, we do not execute any program. Delete everything from RAM
-            terminteAll();
-        }
-        PCB* pcb = getPCBfromReady();  // get first PCB from the ready queue
+        PCB *pcb = getPCBfromReady();  // get first PCB from the ready queue
 
         if (pcb != NULL) {
-            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
+            setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
             int quanta = 2;
 
-            if (cpu.IP+quanta > pcb ->end+1 && cpu.IP != pcb->end+1) {          // program needs less than two quanta to finish
+            // Program needs at least two quanta to finish
+            if (cpu.IP + quanta > pcb->end+1 && cpu.IP != pcb->end+1) {
+                run(quanta);
+                pcb->PC_offset+=2;
+                pcb->PC = cpu.IP + cpu.offset;
+
+                // Check whether program reach the end of frame or not
+                if (cpu.offset == 4) {
+                    cpu.offset = 0;
+                    pageFault(pcb);
+                }
+
+                addToReady(pcb);
+            }
+                // program needs less than two quanta to finish
+            else if (cpu.IP + quanta > pcb->end+1 && cpu.IP != pcb->end+1) {
                 quanta = 1;
                 run(quanta);
+                pcb->PC_offset++;
 
-                if (cpu.IP == pcb->end+1) {        // program is finished
+                // Check whether program reach the end of frame or not
+                if (cpu.offset == 4) {
+                    cpu.offset = 0;
+                    pageFault(pcb);
+                }
+
+                // Check whether program is finished or not
+                if (cpu.IP == pcb->end+1) {
                     // program terminate (Remove from Ready Queue)
                     terminatePCB(pcb);
                     setRAMStatus(false);
                 }
             }
-            else if (cpu.IP+2 <= pcb->end+1) {       // program needs at least two quantas to finish
-                run(quanta);
-                pcb->PC = cpu.IP;  // update PCB PC  pointer
-                addToReady(pcb);
-            }
-            else if (cpu.IP == pcb->end+1) {        // program is finished
+                // Check whether program is finished or not
+            else if (cpu.IP == pcb->end+1) {
                 // program terminate (Remove from Ready Queue)
                 terminatePCB(pcb);
                 setRAMStatus(false);
             }
+            start = 0;
+            end = -1;
         }
-
     }
-    start = 0;
-    end = -1;
 }
 
 // This method will be called if one of the script has load error, then all other processes that has been added to the ready queue
@@ -160,5 +155,61 @@ void terminteAll() {
         end = -1;
 
     }
+}
 
+void pageFault(PCB* pcb) {
+    // Check whether Page reaches the end
+    pcb->PC_page++;
+
+    if (pcb->PC_page >= pcb->pages_max) {
+        // Program terminates
+        terminatePCB(pcb);
+    }
+    // Move new page to frame
+    else {
+        // we check to see if the frame for that page exists in the pageTable array
+        if (pcb->pageTable[pcb->PC_page] >= 0 && pcb->pageTable[pcb->PC_page] <= 10) {
+            int frameNumber = pcb->pageTable[pcb->PC_page];
+            pcb->PC = frameNumber*4;  //TODO: Check
+            pcb->PC_offset = 0;
+        }
+        // If pageTable[PC_page] is NOT valid then we need to find the page on disk and update
+            //the PCB page table and possibly the victim’s page table. Start by (a) finding the
+            // page in the backing store, then (b) finding space in RAM (either find a free cell
+            // or select a victim), finally (c) update the page tables, (d) update RAM frame with
+            // instructions, and do (e) PC=ram[frame] and (f) reset PC_offset to zero.
+        else {
+            // Find the page in the backing store
+            char file_dir[40];
+            //Get the file path
+            sprintf(file_dir, "%s%s", "BackingStore/", pcb->filename);
+            //Open file
+            FILE* file = fopen(file_dir, "r");
+
+            // Finding space in RAM (either find a free cell or select a victim)
+            int frameNumber = findFrame();
+            int victimFrame = 0;
+            if(frameNumber == -1) {
+                victimFrame = findVictim(pcb);
+            }
+
+            // Update the page tables
+            updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
+
+            // Update RAM frame with instructions
+            loadPage(pcb->PC_page, file, frameNumber);
+
+            // PC=ram[frame] and reset PC_offset to zero.
+            if (frameNumber != -1) {
+                pcb->PC = frameNumber*4;  //TODO: Check
+            }
+            else {
+                pcb->PC = victimFrame*4;  //TODO: Check
+            }
+            pcb->PC_offset = 0;
+
+        }
+
+
+    }
 }

@@ -1,5 +1,6 @@
 #ifndef PCB_H
 #define PCB_H
+#include <stdio.h>
 
 typedef struct PCB{
     int PC;
@@ -9,6 +10,7 @@ typedef struct PCB{
     int PC_page;
     int PC_offset;
     int pages_max;
+    char* filename;
     //    struct PCB *next;
 }PCB;
 
