@@ -34,13 +34,15 @@ bool getQuitProgram() {
 
 void run(int quanta) {
     cpu.quanta = quanta;
+    printf("%s\n", "Running quanta...");
 
     while (cpu.quanta >= 0 && cpu.offset < 4) {
 
-        if (cpu.quanta == 0) {break;}
+        if (cpu.quanta == 0 || cpu.offset == 4) {break;}
         cpu.quanta--;
 
-        strcpy(cpu.IR, ram[cpu.IP]);
+        strcpy(cpu.IR, ram[cpu.IP+cpu.offset]);
+        printf("%s\n", ram[cpu.IP+cpu.offset]);
 //        cpu.IP++;
         cpu.offset++;
 

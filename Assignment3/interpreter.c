@@ -255,7 +255,7 @@ int interpret(char *raw_input)
             return 1;
         }
         else if (count > 0 && count < 4) {
-            int valid = -1;
+            int isLaunched = -1;
             for (int j = 1; j < count+1; j++) {
                 // Deal with File open
 
@@ -265,17 +265,13 @@ int interpret(char *raw_input)
                     break;
                 }
                 else {
-                    int isLaunched = launcher(p, tokens[j]);
-                    if (isLaunched == 1) {
-                        valid = myinit(tokens[j]);
+                    isLaunched = launcher(p, tokens[j]);
+                    if (isLaunched == -1) {
+                        break;
                     }
-
-                }
-                if (valid == -1){
-                    break;
                 }
             }
-            if (valid == -1) {
+            if (isLaunched == -1) {
                 terminteAll();
                 free(tokens);
                 return 1;

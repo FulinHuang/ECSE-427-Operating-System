@@ -6,6 +6,8 @@
 
 /*Ready Queue is FIFO and RR*/
 PCB* makePCB(int start, int end) {  //creat node
+    printf("%s%d\n", "PCB start is ", start);
+    printf("%s%d\n", "PCB end is ", end);
 
     PCB *pcb = (PCB *) malloc(sizeof(PCB));
     if (pcb == NULL) {

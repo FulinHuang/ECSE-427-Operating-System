@@ -12,8 +12,8 @@ extern int start;
 extern int end;
 
 // head and tail were moved from kernel.c to kernel.h
-Ready *head = NULL;
-Ready *tail = NULL;
+extern Ready *head;
+extern Ready *tail;
 
 PCB* pcbTable[10];
 

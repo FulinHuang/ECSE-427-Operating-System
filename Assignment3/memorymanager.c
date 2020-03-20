@@ -33,12 +33,14 @@ int launcher(FILE *p, char* fileName) {
     //Open file
     FILE* file = fopen(file_dir, "r");
 
+
     // Call myInit to make pcb and add it to ready list
+    int numPages = countTotalPages(file);
+
     int successCode = myinit(fileName);
 
     if (successCode == 0) {
         // Count total Pages
-        int numPages = countTotalPages(file);
 
         // Find frame number
         int frameNumber = findFrame();
@@ -102,18 +104,26 @@ int launcher(FILE *p, char* fileName) {
  * @return total number of pages needed by the program
  */
 int countTotalPages(FILE *f) {
-    char ch;
+    int ch;
     int count = 0;
-    while((ch = fgetc(f) != EOF)) {
-        if (ch=='\n'){
+    start = end+1;
+
+    while (!feof(f)) {
+        ch = fgetc(f);
+        if (ch == '\n') {
             count++;
         }
     }
+
+    printf("%s%d\n", "count is ", count);
+    end = count - 1;
     fseek(f, 0, SEEK_SET);
-    fclose(f);
 
     count = count / 4;
     if (count == 0) {count = 1; }
+    printf("%s%d\n", "Total pages are ", count);
+    printf("%s%d\n", "Start in count page is ", start);
+    printf("%s%d\n", "End in count page is ", end);
 
     return count;
 }
@@ -126,25 +136,29 @@ int countTotalPages(FILE *f) {
  * @param frameNumber
  */
 void loadPage(int pageNumber, FILE *f, int frameNumber) {
-
+    printf("%s%d\n", "page number is ", pageNumber);
     fseek(f, pageNumber, SEEK_SET);     // place pointer at the correct position
-    fread(ram[frameNumber], 4, 4, f);
-    start = end + 1;
-    end = start + 4;    //TODO: Check
 
-    printf("%s%d\n", "Start in load page is ", start);
-    printf("%s%d\n", "End in load page is ", end);
+    //    fread(ram[frameNumber], 100, 4, f);
 
-//    int count = 0;
-//    char buffer[MAX_NUM];
-//    int i = frameNumber;
-//    while (count < 4 && fgets(buffer, MAX_NUM, f) != NULL) {
-//        buffer[strcspn(buffer, "\n")] = '\0';
-//        ram[i] = strdup(buffer);
-//        count++;
-//        i++;
-//    }
+    int count = 0;
+    char buffer[MAX_NUM];
+    int i = frameNumber;
+    while (fgets(buffer, MAX_NUM, f) != NULL) {
+        buffer[strcspn(buffer, "\n")] = '\0';
+        ram[i] = strdup(buffer);
+        count++;
+        if (count == 4) {
+            break;
+        }
+        i++;
+    }
 
+    // For Testing Purpose
+    printf("%s\n", "Now RAM stores the following...");
+    for (int j = frameNumber; j < frameNumber+ 4; j++) {
+        printf("%s\n", ram[j]);
+    }
 
 }
 
@@ -159,6 +173,7 @@ int findFrame() {
 //    char line = fgets(buffer, MAX_NUM, file);
     for (int i = 0; i < 40; i+=4) {
         if (ram[i] == NULL) {
+            printf("%s%d\n", "Frame number is ", i/4);
             return i/4;
         }
     }
@@ -180,6 +195,7 @@ int findVictim(PCB *p) {
             count++;
         }
         if (count < 10) {
+            printf("%s%d\n", "VICTIM frame number is ", frameNumber);
             return frameNumber;
         }
         count = 0;
@@ -199,10 +215,12 @@ int updatePageTable(PCB *p, int pageNumber, int frameNumber, int victimFrame) {
 
     if (frameNumber == -1) {
         p->pageTable[pageNumber] = victimFrame;
+        printf("%s%d\n", "page table is updated with VICTIM Frame", victimFrame);
         return victimFrame;
     }
     else {
         p->pageTable[pageNumber] = frameNumber;
+        printf("%s%d\n", "page table is updated with frame number", frameNumber);
         return frameNumber;
     }
 

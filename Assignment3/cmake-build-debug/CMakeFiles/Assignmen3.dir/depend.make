@@ -10,18 +10,22 @@ CMakeFiles/Assignmen3.dir/cpu.c.o: ../ram.h
 CMakeFiles/Assignmen3.dir/interpreter.c.o: ../cpu.h
 CMakeFiles/Assignmen3.dir/interpreter.c.o: ../interpreter.c
 CMakeFiles/Assignmen3.dir/interpreter.c.o: ../kernel.h
+CMakeFiles/Assignmen3.dir/interpreter.c.o: ../memorymanager.h
 CMakeFiles/Assignmen3.dir/interpreter.c.o: ../pcb.h
 CMakeFiles/Assignmen3.dir/interpreter.c.o: ../shellmemory.h
 
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../cpu.h
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../kernel.c
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../kernel.h
+CMakeFiles/Assignmen3.dir/kernel.c.o: ../memorymanager.h
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../pcb.h
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../ram.h
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../shell.h
 
+CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../kernel.h
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../memorymanager.c
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../pcb.h
+CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../ram.h
 
 CMakeFiles/Assignmen3.dir/pcb.c.o: ../pcb.c
 CMakeFiles/Assignmen3.dir/pcb.c.o: ../pcb.h
