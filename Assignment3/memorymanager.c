@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <math.h>
 
 #include "pcb.h"
 #include "ram.h"
@@ -119,7 +120,8 @@ int countTotalPages(FILE *f) {
     end = count - 1;
     fseek(f, 0, SEEK_SET);
 
-    count = count / 4;
+    double num = count;
+    count = ceil(num / 4);
     if (count == 0) {count = 1; }
     printf("%s%d\n", "Total pages are ", count);
     printf("%s%d\n", "Start in count page is ", start);
@@ -137,16 +139,17 @@ int countTotalPages(FILE *f) {
  */
 void loadPage(int pageNumber, FILE *f, int frameNumber) {
     printf("%s%d\n", "page number is ", pageNumber);
-    fseek(f, pageNumber, SEEK_SET);     // place pointer at the correct position
 
     //    fread(ram[frameNumber], 100, 4, f);
 
     int count = 0;
     char buffer[MAX_NUM];
-    int i = frameNumber;
+    int i = frameNumber * 4;
+    printf("%s\n", "Now RAM stores the following...");
     while (fgets(buffer, MAX_NUM, f) != NULL) {
         buffer[strcspn(buffer, "\n")] = '\0';
         ram[i] = strdup(buffer);
+        printf("%s\n", ram[i]);
         count++;
         if (count == 4) {
             break;
@@ -154,11 +157,14 @@ void loadPage(int pageNumber, FILE *f, int frameNumber) {
         i++;
     }
 
-    // For Testing Purpose
-    printf("%s\n", "Now RAM stores the following...");
-    for (int j = frameNumber; j < frameNumber+ 4; j++) {
-        printf("%s\n", ram[j]);
-    }
+//    // For Testing Purpose
+//    printf("%s\n", "Now RAM stores the following...");
+//    for (int j = frameNumber; j < frameNumber+ 4; j++) {
+//        printf("%s\n", ram[j]);
+//    }
+
+    fseek(f, pageNumber*4, SEEK_CUR);     // place pointer at the correct position
+
 
 }
 
@@ -215,12 +221,12 @@ int updatePageTable(PCB *p, int pageNumber, int frameNumber, int victimFrame) {
 
     if (frameNumber == -1) {
         p->pageTable[pageNumber] = victimFrame;
-        printf("%s%d\n", "page table is updated with VICTIM Frame", victimFrame);
+        printf("%s%d\n", "page table is updated with VICTIM Frame ", victimFrame);
         return victimFrame;
     }
     else {
         p->pageTable[pageNumber] = frameNumber;
-        printf("%s%d\n", "page table is updated with frame number", frameNumber);
+        printf("%s%d\n", "page table is updated with frame number ", frameNumber);
         return frameNumber;
     }
 

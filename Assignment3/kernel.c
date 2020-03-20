@@ -97,6 +97,13 @@ void scheduler() {
 
         PCB *pcb = getPCBfromReady();  // get first PCB from the ready queue
 
+        printf("%s\n", "Print RAM before running quanta");
+        printf("%s%d\n", "start is ", start);
+        printf("%s%d\n", "end is ", end);
+        for (int i = start; i <= end; i++) {
+            printf("%s\n", ram[i]);
+        }
+
         if (pcb != NULL) {
             int quanta = 2;
 
@@ -104,19 +111,23 @@ void scheduler() {
             printf("%s%d\n", "End is now ", end);
 
             // Program needs at least two quanta to finish
-            if (cpu.IP+cpu.offset+ quanta <= pcb->end+1) {
+            if (cpu.IP+cpu.offset+quanta <= pcb->end+1) {
                 printf("%s\n", "Program needs AT LEAST two quanta to finish");
                 run(quanta);
-                pcb->PC_offset+=2;
-                pcb->PC = cpu.IP + cpu.offset;
+
 
                 // Check whether program reach the end of frame or not
                 if (cpu.offset == 4) {
-                    cpu.offset = 0;
                     setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
                     pageFault(pcb);
+                    cpu.offset = 0;
+
                 }
 
+                pcb->PC_offset+=2;
+                pcb->PC = cpu.IP + cpu.offset;
+                printf("%s%d\n", "pc offset is ", pcb->PC_offset);
+                printf("%s%d\n", "cpu IP is ", cpu.IP);
                 addToReady(pcb);
             }
             // program needs less than two quanta to finish
@@ -124,15 +135,18 @@ void scheduler() {
                 printf("%s\n", "Program needs LESS THEN two quanta to finish");
                 quanta = 1;
                 run(quanta);
-                pcb->PC_offset++;
 
 
                 // Check whether program reach the end of frame or not
                 if (cpu.offset == 4) {
-                    cpu.offset = 0;
                     setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
                     pageFault(pcb);
+                    cpu.offset = 0;
+
                 }
+
+                pcb->PC_offset++;
+                pcb->PC = cpu.IP + cpu.offset;
 
                 // Check whether program is finished or not
                 if (cpu.IP+cpu.offset == pcb->end+1) {
@@ -173,10 +187,10 @@ void terminteAll() {
 
 void pageFault(PCB* pcb) {
     // Check whether Page reaches the end
-    printf("%s]n", "Entering page fault!");
+    printf("%s\n", "Entering page fault!");
     pcb->PC_page++;
 
-    if (pcb->PC_page >= pcb->pages_max) {
+    if (pcb->PC_page > pcb->pages_max) {
         // Program terminates
         terminatePCB(pcb);
         printf("%s\n", "Terminate pcb");
@@ -185,7 +199,8 @@ void pageFault(PCB* pcb) {
     else {
         // we check to see if the frame for that page exists in the pageTable array
         if (pcb->pageTable[pcb->PC_page] >= 0 && pcb->pageTable[pcb->PC_page] <= 10) {
-            printf("%s\n", "Frame valid");
+
+            printf("%s\n", "Frame is valid, program continues...");
             int frameNumber = pcb->pageTable[pcb->PC_page];
             pcb->PC = frameNumber*4;  //TODO: Check
             pcb->PC_offset = 0;
@@ -197,7 +212,7 @@ void pageFault(PCB* pcb) {
             // instructions, and do (e) PC=ram[frame] and (f) reset PC_offset to zero.
         else {
             // Find the page in the backing store
-            printf("%s\n", "Frame invalid");
+            printf("%s\n", "Frame invalid, page fault action ...");
             char file_dir[40];
             //Get the file path
             sprintf(file_dir, "%s%s", "BackingStore/", pcb->filename);

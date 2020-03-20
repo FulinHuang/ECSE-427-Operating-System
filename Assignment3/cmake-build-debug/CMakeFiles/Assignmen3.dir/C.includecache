@@ -6,11 +6,29 @@
 
 #IncludeRegexTransform: 
 
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/cpu.c
+stdio.h
+-
+string.h
+-
+stdbool.h
+-
+cpu.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/cpu.h
+pcb.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
+ram.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/ram.h
+interpreter.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/interpreter.h
+
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/cpu.h
 pcb.h
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
 stdbool.h
 -
+
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/interpreter.h
 
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.c
 stdio.h

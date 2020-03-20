@@ -21,7 +21,7 @@ void initializeCPU() {
 
 //  It copies the PC from the PCB into the IP of the CPU
 void setCPU_IP(PCB *pcb) {
-    cpu.IP = pcb->PC;
+    cpu.IP = pcb->PC+pcb->PC_offset;
 }
 
 void setQuitProgram(bool value) {
@@ -41,6 +41,7 @@ void run(int quanta) {
         if (cpu.quanta == 0 || cpu.offset == 4) {break;}
         cpu.quanta--;
 
+        printf("%s%d\n", "Read from position ", cpu.IP+cpu.offset);
         strcpy(cpu.IR, ram[cpu.IP+cpu.offset]);
         printf("%s\n", ram[cpu.IP+cpu.offset]);
 //        cpu.IP++;
