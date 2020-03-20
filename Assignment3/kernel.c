@@ -135,7 +135,7 @@ void scheduler() {
                 }
 
                 // Check whether program is finished or not
-                if (cpu.IP == pcb->end+1) {
+                if (cpu.IP+cpu.offset == pcb->end+1) {
                     // program terminate (Remove from Ready Queue)
                     printf("%s\n", "terminate pcb");
                     terminatePCB(pcb);
@@ -143,7 +143,7 @@ void scheduler() {
                 }
             }
                 // Check whether program is finished or not
-            else if (cpu.IP == pcb->end+1) {
+            else if (cpu.IP+cpu.offset == pcb->end+1) {
                 // program terminate (Remove from Ready Queue)
                 printf("%s\n", "terminate pcb");
                 terminatePCB(pcb);
