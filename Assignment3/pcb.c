@@ -3,6 +3,7 @@
 
 #include "pcb.h"
 #include "ram.h"
+#include "kernel.h"
 
 /*Ready Queue is FIFO and RR*/
 PCB* makePCB(int start, int end) {  //creat node
@@ -28,6 +29,12 @@ void terminatePCB(PCB* pcb){
         ram[i] = NULL;
     }
     free(pcb);
+
+    char* filename = pcb->filename;
+    char cpCommand[50];
+    sprintf(cpCommand, "rm %s%s", "BackingStore/", filename);
+    system(cpCommand);
+    printf("File REMOVED\n");
 
 
     /**

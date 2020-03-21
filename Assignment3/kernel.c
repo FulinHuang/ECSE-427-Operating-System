@@ -15,7 +15,7 @@ int start = 0;
 int end = -1;
 
 void addToReady(PCB* pcb);
-void pageFault(PCB* pcb);
+int pageFault(PCB* pcb);
 
 int kernel() {
     int error = 0;
@@ -97,37 +97,52 @@ void scheduler() {
 
         PCB *pcb = getPCBfromReady();  // get first PCB from the ready queue
 
-        printf("%s\n", "Print RAM before running quanta");
-        printf("%s%d\n", "start is ", start);
-        printf("%s%d\n", "end is ", end);
-        for (int i = start; i <= end; i++) {
-            printf("%s\n", ram[i]);
-        }
+//        printf("%s\n", "Print RAM before running quanta");
+//        printf("%s%d\n", "start is ", start);
+//        printf("%s%d\n", "end is ", end);
+//        for (int i = start; i <= end; i++) {
+//            printf("%s\n", ram[i]);
+//        }
 
         if (pcb != NULL) {
             int quanta = 2;
+//            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
 
             printf("%s%d\n", "Start is now ", start);
             printf("%s%d\n", "End is now ", end);
+            printf("%s%d\n", "cpu offset ", cpu.offset);
 
             // Program needs at least two quanta to finish
             if (cpu.IP+cpu.offset+quanta <= pcb->end+1) {
                 printf("%s\n", "Program needs AT LEAST two quanta to finish");
                 run(quanta);
 
-
+                printf("%s%d\n", "Prev PC Offset ", pcb->PC_offset);
+                bool pagefault = false;
+                printf("%s%d\n", "cpu offset ", cpu.offset);
                 // Check whether program reach the end of frame or not
                 if (cpu.offset == 4) {
+                    pagefault = true;
+                    //TODO: check pcb->PC and pcb->PC_offset
                     setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
-                    pageFault(pcb);
+                    int j = pageFault(pcb);
+                    if (j == 0) {
+                        terminatePCB(pcb);
+                    }
                     cpu.offset = 0;
-
                 }
 
-                pcb->PC_offset+=2;
-                pcb->PC = cpu.IP + cpu.offset;
+                if (!pagefault) {
+                    pcb->PC_offset+=2;
+                    cpu.offset+=2;
+                    pcb->PC = cpu.IP + cpu.offset;
+                }
+
                 printf("%s%d\n", "pc offset is ", pcb->PC_offset);
+                printf("%s%d\n", "cpu offset is ", cpu.offset);
                 printf("%s%d\n", "cpu IP is ", cpu.IP);
+                printf("%s%d\n", "pcb PC is ", pcb->PC);
+
                 addToReady(pcb);
             }
             // program needs less than two quanta to finish
@@ -136,22 +151,33 @@ void scheduler() {
                 quanta = 1;
                 run(quanta);
 
-
+                bool pagefault = false;
                 // Check whether program reach the end of frame or not
                 if (cpu.offset == 4) {
+                    pagefault = true;
+                    int j = pageFault(pcb);
                     setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
-                    pageFault(pcb);
+                    if (j == 0) {
+                        terminatePCB(pcb);
+                    }
                     cpu.offset = 0;
-
                 }
 
-                pcb->PC_offset++;
-                pcb->PC = cpu.IP + cpu.offset;
+                if (!pagefault) {
+                    pcb->PC_offset++;
+                    cpu.offset++;
+                    pcb->PC = cpu.IP + cpu.offset;
+                }
+
+                printf("%s%d\n", "pc offset is ", pcb->PC_offset);
+                printf("%s%d\n", "cpu offset is ", cpu.offset);
+                printf("%s%d\n", "cpu IP is ", cpu.IP);
+                printf("%s%d\n", "pcb PC is ", pcb->PC);
 
                 // Check whether program is finished or not
                 if (cpu.IP+cpu.offset == pcb->end+1) {
                     // program terminate (Remove from Ready Queue)
-                    printf("%s\n", "terminate pcb");
+                    printf("%s\n", "---------terminate pcb--------");
                     terminatePCB(pcb);
                     setRAMStatus(false);
                 }
@@ -159,7 +185,7 @@ void scheduler() {
                 // Check whether program is finished or not
             else if (cpu.IP+cpu.offset == pcb->end+1) {
                 // program terminate (Remove from Ready Queue)
-                printf("%s\n", "terminate pcb");
+                printf("%s\n", "---------terminate pcb---------");
                 terminatePCB(pcb);
                 setRAMStatus(false);
             }
@@ -175,25 +201,24 @@ void scheduler() {
 void terminteAll() {
     //TODO : the file in the backing store is deleted.
     while (head != NULL) {
-        printf("%s\n", "terminate pcb");
+        printf("%s\n", "---------terminate pcb---------");
         PCB* pcb = getPCBfromReady();
         terminatePCB(pcb);
         setRAMStatus(false);
         start = 0;
         end = -1;
-
     }
 }
 
-void pageFault(PCB* pcb) {
+int pageFault(PCB* pcb) {
     // Check whether Page reaches the end
     printf("%s\n", "Entering page fault!");
     pcb->PC_page++;
 
     if (pcb->PC_page > pcb->pages_max) {
+        printf("%s\n", "Reach Page Max");
         // Program terminates
-        terminatePCB(pcb);
-        printf("%s\n", "Terminate pcb");
+        return 0;
     }
     // Move new page to frame
     else {
@@ -202,7 +227,9 @@ void pageFault(PCB* pcb) {
 
             printf("%s\n", "Frame is valid, program continues...");
             int frameNumber = pcb->pageTable[pcb->PC_page];
+            printf("%s%d\n", "Frame number is ", frameNumber);
             pcb->PC = frameNumber*4;  //TODO: Check
+            printf("%s%d\n", "pcb PC is now ", pcb->PC);
             pcb->PC_offset = 0;
         }
         // If pageTable[PC_page] is NOT valid then we need to find the page on disk and update
@@ -241,9 +268,9 @@ void pageFault(PCB* pcb) {
             }
             pcb->PC_offset = 0;
 
+
         }
         printf("%s\n", "Leaving page fault...");
-
-
+        return 1;
     }
 }
