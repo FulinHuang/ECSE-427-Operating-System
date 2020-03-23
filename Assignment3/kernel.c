@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
+#include <errno.h>
 
 #include "shell.h"
 #include "ram.h"
@@ -33,11 +35,15 @@ void boot() {
     printf("%s\n", "Every cell of the array is initialized to NULL");
 
     // Delete the old backing store directory and create a new directory
-    //TODO: check
-    char *rmcommand  = "rmdir BackingStore";
-    system(rmcommand);
-    char *mkcommand = "mkdir BackingStore";
-    system(mkcommand);
+    if (opendir("BackingStore")) {
+        system("rmdir BackingStore");
+        system("mkdir BackingStore");
+        printf("Remove then create backing store\n");
+    }
+    else if(ENOENT == errno) {  //No Backing Store exists
+        system("mkdir BackingStore");
+        printf("Make new backing store\n");
+    }
 
 }
 
@@ -106,10 +112,12 @@ void scheduler() {
 
         if (pcb != NULL) {
             int quanta = 2;
-//            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
+            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
+            cpu.offset = pcb->PC_offset;
 
             printf("%s%d\n", "Start is now ", start);
             printf("%s%d\n", "End is now ", end);
+            printf("%s%d\n", "CPU IP is ", cpu.IP);
             printf("%s%d\n", "cpu offset ", cpu.offset);
 
             // Program needs at least two quanta to finish
@@ -117,19 +125,19 @@ void scheduler() {
                 printf("%s\n", "Program needs AT LEAST two quanta to finish");
                 run(quanta);
 
-                printf("%s%d\n", "Prev PC Offset ", pcb->PC_offset);
                 bool pagefault = false;
-                printf("%s%d\n", "cpu offset ", cpu.offset);
+
                 // Check whether program reach the end of frame or not
                 if (cpu.offset == 4) {
                     pagefault = true;
                     //TODO: check pcb->PC and pcb->PC_offset
-                    setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
+//                    setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
                     int j = pageFault(pcb);
                     if (j == 0) {
                         terminatePCB(pcb);
                     }
-                    cpu.offset = 0;
+//                    cpu.offset = 0;
+                    pcb->PC_offset = 0;
                 }
 
                 if (!pagefault) {
@@ -156,11 +164,12 @@ void scheduler() {
                 if (cpu.offset == 4) {
                     pagefault = true;
                     int j = pageFault(pcb);
-                    setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
+//                    setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
                     if (j == 0) {
                         terminatePCB(pcb);
                     }
-                    cpu.offset = 0;
+//                    cpu.offset = 0;
+                    pcb->PC_offset = 0;
                 }
 
                 if (!pagefault) {
@@ -223,6 +232,10 @@ int pageFault(PCB* pcb) {
     // Move new page to frame
     else {
         // we check to see if the frame for that page exists in the pageTable array
+        for (int i = 0; i < 10; i++) {
+            printf("%s%d\n", "Page Table is ", pcb->pageTable[i]);
+        }
+
         if (pcb->pageTable[pcb->PC_page] >= 0 && pcb->pageTable[pcb->PC_page] <= 10) {
 
             printf("%s\n", "Frame is valid, program continues...");
@@ -248,9 +261,11 @@ int pageFault(PCB* pcb) {
 
             // Finding space in RAM (either find a free cell or select a victim)
             int frameNumber = findFrame();
+            printf("%s%d\n", "Frame number is ", frameNumber);
             int victimFrame = 0;
             if(frameNumber == -1) {
                 victimFrame = findVictim(pcb);
+                printf("%s%d\n", "Frame is a victim Frame", victimFrame);
             }
 
             // Update the page tables

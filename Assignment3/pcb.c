@@ -15,7 +15,7 @@ PCB* makePCB(int start, int end) {  //creat node
         return NULL;
     }
     else {
-        pcb->PC = start;
+//        pcb->PC = start;
         pcb->start = start;
         pcb->end = end;
 
@@ -31,6 +31,7 @@ void terminatePCB(PCB* pcb){
     free(pcb);
 
     char* filename = pcb->filename;
+    printf("%s%s\n", "file name is ", pcb->filename);
     char cpCommand[50];
     sprintf(cpCommand, "rm %s%s", "BackingStore/", filename);
     system(cpCommand);

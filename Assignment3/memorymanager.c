@@ -34,6 +34,8 @@ int launcher(FILE *p, char* fileName) {
     //Open file
     FILE* file = fopen(file_dir, "r");
 
+    printf("%s%s\n", "File is successfully stored ", fileName);
+
 
     // Call myInit to make pcb and add it to ready list
     int numPages = countTotalPages(file);
@@ -45,15 +47,10 @@ int launcher(FILE *p, char* fileName) {
 
         // Find frame number
         int frameNumber = findFrame();
-        PCB* pcb = head->pcb;
+//        PCB* pcb = head->pcb;
+        PCB* pcb = getPCBfromReady();
         int victimFrame = 0;
         if (frameNumber == -1) {
-
-//            //Create Page table in RAM
-////            for(int i = 0; i < 10; i++) {
-////                pcb->pageTable[i] = NULL;
-////            }
-
             victimFrame  = findVictim(pcb);
             pcbTable[victimFrame] = pcb;
         }
@@ -61,17 +58,14 @@ int launcher(FILE *p, char* fileName) {
             pcbTable[frameNumber] = pcb;
         }
 
-
+        // Initialize pcb
         pcb->pages_max = numPages;
         pcb->PC_page = 0;  // initialize pc_page
         pcb->filename = fileName;
-        //TODO: initialize other pcb value ?
-//        pcb->PC = 0;
-//        pcb->pc_offset = 0;
+        pcb->PC = frameNumber*4;
+        pcb->PC_offset = 0;
         loadPage(pcb->PC_page, file, frameNumber);
         updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
-
-
 
         if (numPages > 1) {
             int frame_number = findFrame();
@@ -79,19 +73,19 @@ int launcher(FILE *p, char* fileName) {
             if (frame_number == -1) {
                 victim_Frame = findVictim(pcb);
                 pcbTable[victim_Frame] = pcb;
-
             }
             else {
                 pcbTable[frame_number] = pcb;
 
             }
-            pcb->PC_page++;
-            //TODO: update other pcb value ?
-//        pcb->PC = ;
-//        pcb->pc_offset = ;
-            loadPage(pcb->PC_page, file, frame_number);
-            updatePageTable(pcb, pcb->PC_page, frame_number, victim_Frame);
+//            pcb->PC_page++;
+            loadPage(pcb->PC_page+1, file, frame_number);
+            updatePageTable(pcb, pcb->PC_page+1, frame_number, victim_Frame);
         }
+
+        addToReady(pcb);
+
+        return 1;
     }
 
     // launcher() function returns a 1 if it was successful launching the program,
@@ -117,7 +111,7 @@ int countTotalPages(FILE *f) {
     }
 
     printf("%s%d\n", "count is ", count);
-    end = count - 1;
+    end = start+count-1;
     fseek(f, 0, SEEK_SET);
 
     double num = count;

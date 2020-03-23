@@ -19,6 +19,8 @@ PCB* pcbTable[10];
 
 int myinit(char *filename);
 
+void addToReady(PCB* pcb);
+
 void scheduler();
 
 PCB *getPCBfromReady();
