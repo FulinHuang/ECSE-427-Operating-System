@@ -16,8 +16,8 @@ PCB* makePCB(int start, int end) {  //creat node
     }
     else {
 //        pcb->PC = start;
-        pcb->start = start;
-        pcb->end = end;
+        pcb->start = 0;
+        pcb->end = 0;
 
         return pcb;
     }

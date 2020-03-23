@@ -36,60 +36,56 @@ int launcher(FILE *p, char* fileName) {
 
     printf("%s%s\n", "File is successfully stored ", fileName);
 
-
     // Call myInit to make pcb and add it to ready list
     int numPages = countTotalPages(file);
+    PCB* pcb = myinit(fileName);
 
-    int successCode = myinit(fileName);
+    // Find frame number
+    int frameNumber = findFrame();
 
-    if (successCode == 0) {
-        // Count total Pages
-
-        // Find frame number
-        int frameNumber = findFrame();
-//        PCB* pcb = head->pcb;
-        PCB* pcb = getPCBfromReady();
-        int victimFrame = 0;
-        if (frameNumber == -1) {
-            victimFrame  = findVictim(pcb);
-            pcbTable[victimFrame] = pcb;
-        }
-        else {
-            pcbTable[frameNumber] = pcb;
-        }
-
-        // Initialize pcb
-        pcb->pages_max = numPages;
-        pcb->PC_page = 0;  // initialize pc_page
-        pcb->filename = fileName;
-        pcb->PC = frameNumber*4;
-        pcb->PC_offset = 0;
-        loadPage(pcb->PC_page, file, frameNumber);
-        updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
-
-        if (numPages > 1) {
-            int frame_number = findFrame();
-            int victim_Frame = 0;
-            if (frame_number == -1) {
-                victim_Frame = findVictim(pcb);
-                pcbTable[victim_Frame] = pcb;
-            }
-            else {
-                pcbTable[frame_number] = pcb;
-
-            }
-//            pcb->PC_page++;
-            loadPage(pcb->PC_page+1, file, frame_number);
-            updatePageTable(pcb, pcb->PC_page+1, frame_number, victim_Frame);
-        }
-
-        addToReady(pcb);
-
-        return 1;
+    int victimFrame = 0;
+    if (frameNumber == -1) {
+        victimFrame  = findVictim(pcb);
+        pcbTable[victimFrame] = pcb;
+        pcb->start = victimFrame * 4;
+        pcb->end = pcb->start + (end - start);
+    }
+    else {
+        pcbTable[frameNumber] = pcb;
+        pcb->start = frameNumber * 4;
+        pcb->end = pcb->start + (end - start);
     }
 
-    // launcher() function returns a 1 if it was successful launching the program,
-    // otherwise it returns 0.
+    printf("%s%d\n", "pcb start is ", pcb->start);
+    printf("%s%d\n", "pcb end is ", pcb->end);
+    // Initialize pcb
+    pcb->pages_max = numPages;
+    pcb->PC_page = 0;  // initialize pc_page
+    pcb->filename = fileName;
+    pcb->PC = frameNumber*4;
+    pcb->PC_offset = 0;
+    loadPage(pcb->PC_page, file, frameNumber);
+    updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
+    printf("%s%d\n", "PC is ", pcb->PC);
+
+    if (numPages > 1) {
+        int frame_number = findFrame();
+        int victim_Frame = 0;
+        if (frame_number == -1) {
+            victim_Frame = findVictim(pcb);
+            pcbTable[victim_Frame] = pcb;
+        }
+        else {
+            pcbTable[frame_number] = pcb;
+
+        }
+//            pcb->PC_page++;
+        loadPage(pcb->PC_page+1, file, frame_number);
+        updatePageTable(pcb, pcb->PC_page+1, frame_number, victim_Frame);
+    }
+
+// launcher() function returns a 1 if it was successful launching the program,
+// otherwise it returns 0.
 
     return 0;
 }

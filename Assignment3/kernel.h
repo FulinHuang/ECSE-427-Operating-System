@@ -17,7 +17,7 @@ extern Ready *tail;
 
 PCB* pcbTable[10];
 
-int myinit(char *filename);
+PCB* myinit(char *filename);
 
 void addToReady(PCB* pcb);
 
