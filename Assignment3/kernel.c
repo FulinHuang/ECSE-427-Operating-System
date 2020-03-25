@@ -103,9 +103,6 @@ void scheduler() {
     while (head != NULL) {
 
         PCB *pcb = getPCBfromReady();  // get first PCB from the ready queue
-        if (cpu.offset == 0) {
-            setCPU_IP(pcb);
-        }
 
 //        printf("%s\n", "Print RAM before running quanta");
 //        printf("%s%d\n", "start is ", start);
@@ -114,10 +111,26 @@ void scheduler() {
 //            printf("%s\n", ram[i]);
 //        }
 
+
+        int pc_value = 0;
         if (pcb != NULL) {
+            printf("%s\n", "--- Start New PCB ---");
+            cpu.IP = pcb->start+pcb->PC_page*4;
+            printf("%s%d\n", "cpu IP is ", cpu.IP);
+
             int quanta = 2;
 //            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
-            int pc_value = pcb->PC;
+
+            if ((pcb->end + 1 - pc_value) == 0) {
+//            else if ((pcb->end - pcb->start + 1) - pc_value == 0) {
+//            else if (cpu.IP+cpu.offset == pcb->end+1) {
+                // program terminate (Remove from Ready Queue)
+                printf("%s\n", "---------terminate pcb---------");
+                terminatePCB(pcb);
+                setRAMStatus(false);
+            }
+
+            pc_value = pcb->PC;
             cpu.offset = pcb->PC_offset;
 
             printf("%s%d\n", "cpu offset ", cpu.offset);
@@ -126,62 +139,48 @@ void scheduler() {
             // Program needs at least two quanta to finish
 //            if (cpu.IP+cpu.offset+quanta <= pcb->end+1) {
             if ((pcb->end - pc_value) >= quanta) {
-//            if ((pcb->end - pcb-> start + 1) - pc_value >= quanta) {
                 printf("%s\n", "Program needs AT LEAST two quanta to finish");
                 run(quanta);
 
-                bool pagefault = false;
+                cpu.offset+=2;
 
                 // Check whether program reach the end of frame or not
-                if (cpu.offset == 4) {
-                    pagefault = true;
-                    //TODO: check pcb->PC and pcb->PC_offset
-//                    setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
+                if (cpu.offset == 4){
                     int j = pageFault(pcb);
                     if (j == 0) {
                         terminatePCB(pcb);
                     }
-//                    cpu.offset = 0;
-                    pcb->PC_offset = 0;
                 }
-
-                if (!pagefault) {
+                else {
                     pcb->PC_offset+=2;
-                    cpu.offset+=2;
                     pcb->PC = cpu.IP + cpu.offset;
                 }
 
                 printf("%s%d\n", "pc offset is ", pcb->PC_offset);
                 printf("%s%d\n", "cpu offset is ", cpu.offset);
-                printf("%s%d\n", "cpu IP is ", cpu.IP);
                 printf("%s%d\n", "pcb PC is ", pcb->PC);
 
                 addToReady(pcb);
             }
             // program needs less than two quanta to finish
-            else if ((pcb->end - pc_value) < quanta && (pcb->end - pc_value) != 0) {
-//            else if ((pcb->end - pcb->start +1) - pc_value < quanta && (pcb->end - pcb->start + 1) - pc_value != 0) {
+            else if ((pcb->end + 1 - pc_value) < quanta && (pcb->end + 1 - pc_value) != 0) {
 //            else if (cpu.IP + cpu.offset + quanta > pcb->end+1 && cpu.IP+cpu.offset != pcb->end+1) {
                 printf("%s\n", "Program needs LESS THEN two quanta to finish");
                 quanta = 1;
                 run(quanta);
 
-                bool pagefault = false;
-                // Check whether program reach the end of frame or not
+                cpu.offset++;
+
                 if (cpu.offset == 4) {
-                    pagefault = true;
                     int j = pageFault(pcb);
                     setCPU_IP(pcb);           // copy PC from the PCB into IP of the CPU
                     if (j == 0) {
                         terminatePCB(pcb);
                     }
-//                    cpu.offset = 0;
                     pcb->PC_offset = 0;
                 }
-
-                if (!pagefault) {
+                else {
                     pcb->PC_offset++;
-                    cpu.offset++;
                     pcb->PC = cpu.IP + cpu.offset;
                 }
 
@@ -192,22 +191,12 @@ void scheduler() {
 
                 // Check whether program is finished or not
                 if ((pcb->end - pc_value) == 0) {
-//                if ((pcb->end - pcb->start + 1) - pc_value == 0) {
 //                if (cpu.IP+cpu.offset == pcb->end+1) {
                     // program terminate (Remove from Ready Queue)
                     printf("%s\n", "---------terminate pcb--------");
                     terminatePCB(pcb);
                     setRAMStatus(false);
                 }
-            }
-                // Check whether program is finished or not
-            else if ((pcb->end - pc_value) == 0) {
-//            else if ((pcb->end - pcb->start + 1) - pc_value == 0) {
-//            else if (cpu.IP+cpu.offset == pcb->end+1) {
-                // program terminate (Remove from Ready Queue)
-                printf("%s\n", "---------terminate pcb---------");
-                terminatePCB(pcb);
-                setRAMStatus(false);
             }
 
         }
