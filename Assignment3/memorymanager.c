@@ -64,6 +64,9 @@ int launcher(FILE *p, char* fileName) {
     pcb->filename = fileName;
     pcb->PC = frameNumber*4;
     pcb->PC_offset = 0;
+    for (int i = 0; i < 10; i++) {
+        pcb->pageTable[i] = -999;
+    }
     loadPage(pcb->PC_page, file, frameNumber);
     updatePageTable(pcb, pcb->PC_page, frameNumber, victimFrame);
     printf("%s%d\n", "PC is ", pcb->PC);

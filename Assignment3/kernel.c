@@ -121,7 +121,7 @@ void scheduler() {
             int quanta = 2;
 //            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
 
-            if ((pcb->end + 1 - pc_value) == 0) {
+            if ((pcb->end - pc_value) == 0) {
 //            else if ((pcb->end - pcb->start + 1) - pc_value == 0) {
 //            else if (cpu.IP+cpu.offset == pcb->end+1) {
                 // program terminate (Remove from Ready Queue)
@@ -135,10 +135,11 @@ void scheduler() {
 
             printf("%s%d\n", "cpu offset ", cpu.offset);
             printf("%s%d\n", "pc_value ", pc_value);
+            printf("%s%d\n", "pcb end + 1 ", pcb->end+1);
 
             // Program needs at least two quanta to finish
 //            if (cpu.IP+cpu.offset+quanta <= pcb->end+1) {
-            if ((pcb->end - pc_value) >= quanta) {
+            if ((pcb->end + 1 - pc_value) >= quanta) {
                 printf("%s\n", "Program needs AT LEAST two quanta to finish");
                 run(quanta);
 
@@ -199,6 +200,16 @@ void scheduler() {
                 }
             }
 
+            if ((pcb->end+1 - pc_value) == 0) {
+//            else if ((pcb->end - pcb->start + 1) - pc_value == 0) {
+//            else if (cpu.IP+cpu.offset == pcb->end+1) {
+                // program terminate (Remove from Ready Queue)
+                printf("%s\n", "---------terminate pcb---------");
+                terminatePCB(pcb);
+                setRAMStatus(false);
+            }
+
+
         }
     }
     start = 0;
@@ -223,6 +234,7 @@ int pageFault(PCB* pcb) {
     // Check whether Page reaches the end
     printf("%s\n", "Entering page fault!");
     pcb->PC_page++;
+    printf("%s%d\n", "PC page is ", pcb->PC_page);
 
     if (pcb->PC_page > pcb->pages_max) {
         printf("%s\n", "Reach Page Max");
@@ -276,10 +288,10 @@ int pageFault(PCB* pcb) {
 
             // PC=ram[frame] and reset PC_offset to zero.
             if (frameNumber != -1) {
-                pcb->PC = frameNumber*4;  //TODO: Check
+                pcb->PC = frameNumber*4;
             }
             else {
-                pcb->PC = victimFrame*4;  //TODO: Check
+                pcb->PC = victimFrame*4;
             }
             pcb->PC_offset = 0;
 
