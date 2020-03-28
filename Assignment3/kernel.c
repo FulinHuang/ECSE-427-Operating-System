@@ -118,6 +118,9 @@ void scheduler() {
             cpu.IP = pcb->start+pcb->PC_page*4;
             printf("%s%d\n", "cpu IP is ", cpu.IP);
 
+            // TODO: when IP >= 40
+
+
             int quanta = 2;
 //            setCPU_IP(pcb);            // copy PC from the PCB into IP of the CPU
 
@@ -127,7 +130,6 @@ void scheduler() {
                 // program terminate (Remove from Ready Queue)
                 printf("%s\n", "---------terminate pcb---------");
                 terminatePCB(pcb);
-                setRAMStatus(false);
             }
 
             pc_value = pcb->PC;
@@ -196,7 +198,6 @@ void scheduler() {
                     // program terminate (Remove from Ready Queue)
                     printf("%s\n", "---------terminate pcb--------");
                     terminatePCB(pcb);
-                    setRAMStatus(false);
                 }
             }
 
@@ -206,7 +207,6 @@ void scheduler() {
                 // program terminate (Remove from Ready Queue)
                 printf("%s\n", "---------terminate pcb---------");
                 terminatePCB(pcb);
-                setRAMStatus(false);
             }
 
 
@@ -224,7 +224,6 @@ void terminteAll() {
         printf("%s\n", "---------terminate pcb---------");
         PCB* pcb = getPCBfromReady();
         terminatePCB(pcb);
-        setRAMStatus(false);
         start = 0;
         end = -1;
     }
@@ -248,7 +247,7 @@ int pageFault(PCB* pcb) {
             printf("%s%d\n", "Page Table is ", pcb->pageTable[i]);
         }
 
-        if (pcb->pageTable[pcb->PC_page] >= 0 && pcb->pageTable[pcb->PC_page] <= 10) {
+        if (pcb->pageTable[pcb->PC_page] >= 0 && pcb->pageTable[pcb->PC_page] < 10) {
 
             printf("%s\n", "Frame is valid, program continues...");
             int frameNumber = pcb->pageTable[pcb->PC_page];
