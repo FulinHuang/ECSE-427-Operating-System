@@ -22,8 +22,15 @@ int launcher(FILE *p, char* fileName) {
     // Copy entire file into backing store
     char cpCommand[40];
 
-    int random = rand()%50;
+    int random = rand()%100;
     printf("%s%d\n", "File name is ", random);
+
+//    FILE *f = fopen(fileName, "rt");
+//    if (f == NULL) {
+//        printf("Script not found\n");
+//        return -1;
+//    }
+
     sprintf(cpCommand, "cp %s %s%d", fileName, "BackingStore/", random);
     system(cpCommand);
 
@@ -89,6 +96,8 @@ int launcher(FILE *p, char* fileName) {
 //        pcb->PC_page++;
         loadPage(pcb->PC_page+1, file, frame_number);
         updatePageTable(pcb, pcb->PC_page+1, frame_number, victim_Frame);
+
+        return 0;
     }
 
 // launcher() function returns a 1 if it was successful launching the program,
@@ -149,6 +158,7 @@ void loadPage(int pageNumber, FILE *f, int frameNumber) {
             buffer[strcspn(buffer, "\n")] = '\0';
             ram[i] = strdup(buffer);
             printf("%d\n", i);
+            printf("%s%d\n", "At line ", pageNumber*4);
             printf("%s\n", ram[i]);
             count++;
 
@@ -199,18 +209,23 @@ int findFrame() {
 int findVictim(PCB *p) {
 
     int frameNumber = rand()%10;
+    printf("%s%d\n", "Potential framenumber ", frameNumber);
     int count = 0;
 
     while (1) {
         while(count < 10 && frameNumber != p->pageTable[count]) {
             count++;
         }
-        if (count < 10) {
+        if (count == 10) {
             printf("%s%d\n", "VICTIM frame number is ", frameNumber);
             return frameNumber;
         }
         count = 0;
+
         frameNumber = (frameNumber+1)%10;
+        printf("%s%d\n", "Potential framenumber ", frameNumber);
+
+
     }
 }
 
@@ -226,11 +241,36 @@ int updatePageTable(PCB *p, int pageNumber, int frameNumber, int victimFrame) {
 
     if (frameNumber == -1) {
         p->pageTable[pageNumber] = victimFrame;
+
+        for (int i = 0; i < 10; i++) {
+            if (pcbTable[i] != NULL && pcbTable[i] != p) {
+                PCB* pcb = pcbTable[i];
+                for (int j = 0; j < 10; j++) {
+                    if (pcb->pageTable[j] == victimFrame) {
+                        pcb->pageTable[j] = -999;
+                    }
+
+                }
+            }
+        }
+
         printf("%s%d\n", "page table is updated with VICTIM Frame ", victimFrame);
         return victimFrame;
     }
     else {
         p->pageTable[pageNumber] = frameNumber;
+
+        for (int i = 0; i < 10; i++) {
+            if (pcbTable[i] != NULL && pcbTable[i] != p) {
+                PCB *pcb = pcbTable[i];
+                for (int j = 0; j < 10; j++) {
+                    if (pcb->pageTable[j] == frameNumber) {
+                        pcb->pageTable[j] = -999;
+                    }
+                }
+            }
+        }
+
         printf("%s%d\n", "page table is updated with frame number ", frameNumber);
         return frameNumber;
     }

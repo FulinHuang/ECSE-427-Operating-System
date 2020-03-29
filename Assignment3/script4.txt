@@ -1,38 +1,39 @@
-set x hi
+set x 0
 run script2.txt
 set montreal bobbie
 print montreal
 help 
 print x
-set x bye
+set x 6
 run script2.txt
-set y 10
+set y 8
 print y
-set x hi
+set x 10
 run script2.txt
-set montreal bobbie
-print montreal
+set x 12
+print x
 help 
 print x
-set x bye
+set x 16
 run script2.txt
-set y 20
+set y 18
 print y
-set x hi
+set x 20
 run script2.txt
-set montreal bobbie
-print montreal
+set x 22
+print x
 help 
 print x
-set x bye
+set x 26
 run script2.txt
-set y 30
+set y 28
 print y
-set montreal bobbie
-print montreal
+set x 30
+print x
 run script2.txt
+set y 33
+print y
 set y 35
-print y
-set y 36
 print y 
-set y 38
+set y 37
+print y

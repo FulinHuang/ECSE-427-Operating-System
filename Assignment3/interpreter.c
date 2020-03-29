@@ -262,6 +262,7 @@ int interpret(char *raw_input)
                 FILE *p = fopen(tokens[j], "rt");
                 if (p == NULL) {
                     printf("Script not found\n");
+                    isLaunched = -1;
                     break;
                 }
                 else {

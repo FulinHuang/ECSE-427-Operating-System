@@ -36,11 +36,18 @@ void terminatePCB(PCB* pcb){
         printf("%s\n", ram[i]);
     }
 
+    // Remove from pcb table
+    for (int i = 0; i < 10; i++) {
+        if (pcbTable[i] == pcb) {
+            pcbTable[i] = NULL;
+        }
+    }
+
+    int fileNumber = pcb->pid;
 
     free(pcb);
 
 //    char* filename = pcb->filename;
-    int fileNumber = pcb->pid;
     printf("%s%d\n", "file name is ", fileNumber);
     char cpCommand[50];
     sprintf(cpCommand, "rm %s%d", "BackingStore/", fileNumber);

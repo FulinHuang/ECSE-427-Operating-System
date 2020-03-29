@@ -9,7 +9,7 @@ int shellUI()
 {
     printf("Kernel 1.0 loaded!\n"
            "Welcome to the Irene's shell!\n"
-           "Shell version 2.0 Updated Februray 2020\n");
+           "Shell version 3.0 Updated March 2020\n");
 
     shell_memory_initialize();
 
