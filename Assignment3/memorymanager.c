@@ -153,23 +153,47 @@ void loadPage(int pageNumber, FILE *f, int frameNumber) {
     char buffer[MAX_NUM];
     int i = frameNumber * 4;
     printf("%s\n", "Now RAM stores the following...");
-    while (fgets(buffer, MAX_NUM, f) != NULL) {
-        if (j >= pageNumber*4 && j <= pageNumber*4 + 4) {
+    while(j < 40 && fgets(buffer, MAX_NUM, f)!= NULL) {
+
+        if (j >= pageNumber * 4 && j < pageNumber * 4 + 4) {
             buffer[strcspn(buffer, "\n")] = '\0';
             ram[i] = strdup(buffer);
             printf("%d\n", i);
-            printf("%s%d\n", "At line ", pageNumber*4);
+            printf("%s%d\n", "At line ", pageNumber * 4);
             printf("%s\n", ram[i]);
             count++;
-
             i++;
+
+
         }
         if (count == 4) {
             break;
         }
         j++;
-
     }
+    while (j < pageNumber * 4 + 4) {
+        ram[i] = NULL;
+        j++;
+        i++;
+    }
+
+
+//    while (fgets(buffer, MAX_NUM, f) != NULL) {
+//        if (j >= pageNumber*4 && j <= pageNumber*4 + 4) {
+//            buffer[strcspn(buffer, "\n")] = '\0';
+//            ram[i] = strdup(buffer);
+//            printf("%d\n", i);
+//            printf("%s%d\n", "At line ", pageNumber*4);
+//            printf("%s\n", ram[i]);
+//            count++;
+//
+//            i++;
+//        }
+//        if (count == 4) {
+//            break;
+//        }
+//        j++;
+//    }
 
 //    // For Testing Purpose
 //    printf("%s\n", "Now RAM stores the following...");
