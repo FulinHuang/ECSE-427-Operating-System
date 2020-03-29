@@ -37,3 +37,4 @@ set y 35
 print y 
 set y 37
 print y
+quit 
