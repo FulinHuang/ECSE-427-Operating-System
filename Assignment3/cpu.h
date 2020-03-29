@@ -15,7 +15,7 @@ void initializeCPU();
 
 void setCPU_IP(PCB *pcb);
 
-void run(int quanta);
+int run(int quanta);
 
 bool getQuitProgram();
 

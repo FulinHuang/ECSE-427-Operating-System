@@ -21,7 +21,10 @@ int launcher(FILE *p, char* fileName) {
 
     // Copy entire file into backing store
     char cpCommand[40];
-    sprintf(cpCommand, "cp %s %s%s", fileName, "BackingStore/", fileName);
+
+    int random = rand()%50;
+    printf("%s%d\n", "File name is ", random);
+    sprintf(cpCommand, "cp %s %s%d", fileName, "BackingStore/", random);
     system(cpCommand);
 
     // Close the file pointer pointing to the original file
@@ -30,11 +33,11 @@ int launcher(FILE *p, char* fileName) {
     // Open the file in the backing store
     char file_dir[40];
     //Get the file path
-    sprintf(file_dir, "%s%s", "BackingStore/", fileName);
+    sprintf(file_dir, "%s%d", "BackingStore/", random);
     //Open file
     FILE* file = fopen(file_dir, "r");
 
-    printf("%s%s\n", "File is successfully stored ", fileName);
+    printf("%s%d\n", "File is successfully stored ", random);
 
     // Call myInit to make pcb and add it to ready list
     int numPages = countTotalPages(file);
@@ -47,23 +50,24 @@ int launcher(FILE *p, char* fileName) {
     if (frameNumber == -1) {
         victimFrame  = findVictim(pcb);
         pcbTable[victimFrame] = pcb;
-        pcb->start = victimFrame * 4;
-        pcb->end = pcb->start + (end - start);
+//        pcb->start = victimFrame * 4;
+//        pcb->end = pcb->start + (end - start);
     }
     else {
         pcbTable[frameNumber] = pcb;
-        pcb->start = frameNumber * 4;
-        pcb->end = pcb->start + (end - start);
+//        pcb->start = frameNumber * 4;
+//        pcb->end = pcb->start + (end - start);
     }
 
-    printf("%s%d\n", "pcb start is ", pcb->start);
-    printf("%s%d\n", "pcb end is ", pcb->end);
+//    printf("%s%d\n", "pcb start is ", pcb->start);
+//    printf("%s%d\n", "pcb end is ", pcb->end);
     // Initialize pcb
     pcb->pages_max = numPages;
     pcb->PC_page = 0;  // initialize pc_page
     pcb->filename = fileName;
     pcb->PC = frameNumber*4;
     pcb->PC_offset = 0;
+    pcb->pid = random;
     for (int i = 0; i < 10; i++) {
         pcb->pageTable[i] = -999;
     }
@@ -82,7 +86,7 @@ int launcher(FILE *p, char* fileName) {
             pcbTable[frame_number] = pcb;
 
         }
-//            pcb->PC_page++;
+//        pcb->PC_page++;
         loadPage(pcb->PC_page+1, file, frame_number);
         updatePageTable(pcb, pcb->PC_page+1, frame_number, victim_Frame);
     }
@@ -100,7 +104,7 @@ int launcher(FILE *p, char* fileName) {
 int countTotalPages(FILE *f) {
     int ch;
     int count = 0;
-    start = end+1;
+//    start = end+1;
 
     while (!feof(f)) {
         ch = fgetc(f);
@@ -110,15 +114,15 @@ int countTotalPages(FILE *f) {
     }
 
     printf("%s%d\n", "count is ", count);
-    end = start+count-1;
+//    end = start+count-1;
     fseek(f, 0, SEEK_SET);
 
     double num = count;
     count = ceil(num / 4);
     if (count == 0) {count = 1; }
     printf("%s%d\n", "Total pages are ", count);
-    printf("%s%d\n", "Start in count page is ", start);
-    printf("%s%d\n", "End in count page is ", end);
+//    printf("%s%d\n", "Start in count page is ", start);
+//    printf("%s%d\n", "End in count page is ", end);
 
     return count;
 }
@@ -136,18 +140,25 @@ void loadPage(int pageNumber, FILE *f, int frameNumber) {
     //    fread(ram[frameNumber], 100, 4, f);
 
     int count = 0;
+    int j = 0;
     char buffer[MAX_NUM];
     int i = frameNumber * 4;
     printf("%s\n", "Now RAM stores the following...");
     while (fgets(buffer, MAX_NUM, f) != NULL) {
-        buffer[strcspn(buffer, "\n")] = '\0';
-        ram[i] = strdup(buffer);
-        printf("%s\n", ram[i]);
-        count++;
+        if (j >= pageNumber*4 && j <= pageNumber*4 + 4) {
+            buffer[strcspn(buffer, "\n")] = '\0';
+            ram[i] = strdup(buffer);
+            printf("%d\n", i);
+            printf("%s\n", ram[i]);
+            count++;
+
+            i++;
+        }
         if (count == 4) {
             break;
         }
-        i++;
+        j++;
+
     }
 
 //    // For Testing Purpose
@@ -156,7 +167,8 @@ void loadPage(int pageNumber, FILE *f, int frameNumber) {
 //        printf("%s\n", ram[j]);
 //    }
 
-    fseek(f, pageNumber*4, SEEK_CUR);     // place pointer at the correct position
+//    fseek(f, pageNumber*4, SEEK_CUR);     // place pointer at the correct position
+    fseek(f, 0, SEEK_SET);     // place pointer at the correct position
 
 
 }

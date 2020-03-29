@@ -1,3 +1,11 @@
-set z 30
+set z 2
+print z
+set z 4
+print z
+set z 6
+print z
+set z 8
+print z
+set z 10
 print z
 quit

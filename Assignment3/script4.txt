@@ -1,0 +1,38 @@
+set x hi
+run script2.txt
+set montreal bobbie
+print montreal
+help 
+print x
+set x bye
+run script2.txt
+set y 10
+print y
+set x hi
+run script2.txt
+set montreal bobbie
+print montreal
+help 
+print x
+set x bye
+run script2.txt
+set y 20
+print y
+set x hi
+run script2.txt
+set montreal bobbie
+print montreal
+help 
+print x
+set x bye
+run script2.txt
+set y 30
+print y
+set montreal bobbie
+print montreal
+run script2.txt
+set y 35
+print y
+set y 36
+print y 
+set y 38

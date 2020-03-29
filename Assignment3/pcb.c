@@ -6,9 +6,7 @@
 #include "kernel.h"
 
 /*Ready Queue is FIFO and RR*/
-PCB* makePCB(int start, int end) {  //creat node
-    printf("%s%d\n", "PCB start is ", start);
-    printf("%s%d\n", "PCB end is ", end);
+PCB* makePCB() {  //creat node
 
     PCB *pcb = (PCB *) malloc(sizeof(PCB));
     if (pcb == NULL) {
@@ -16,8 +14,8 @@ PCB* makePCB(int start, int end) {  //creat node
     }
     else {
 //        pcb->PC = start;
-        pcb->start = 0;
-        pcb->end = 0;
+//        pcb->start = 0;
+//        pcb->end = 0;
 
         return pcb;
     }
@@ -25,15 +23,27 @@ PCB* makePCB(int start, int end) {  //creat node
 
 void terminatePCB(PCB* pcb){
 
-    for (int i = pcb->start; i <= pcb->end; i++){
-        ram[i] = NULL;
+    for (int i = 0; i < 10; i++) {
+        int frameNumber = pcb->pageTable[i];
+        if (frameNumber != -999) {
+            for (int j = 0; j < 4; j++) {
+                ram[frameNumber*4 + j] = NULL;
+            }
+        }
+
     }
+    for (int i = 0; i < 40; i++){
+        printf("%s\n", ram[i]);
+    }
+
+
     free(pcb);
 
-    char* filename = pcb->filename;
-    printf("%s%s\n", "file name is ", pcb->filename);
+//    char* filename = pcb->filename;
+    int fileNumber = pcb->pid;
+    printf("%s%d\n", "file name is ", fileNumber);
     char cpCommand[50];
-    sprintf(cpCommand, "rm %s%s", "BackingStore/", filename);
+    sprintf(cpCommand, "rm %s%d", "BackingStore/", fileNumber);
     system(cpCommand);
     printf("File REMOVED\n");
 
