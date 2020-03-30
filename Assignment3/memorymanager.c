@@ -126,8 +126,9 @@ int countTotalPages(FILE *f) {
 //    end = start+count-1;
     fseek(f, 0, SEEK_SET);
 
-    double num = count;
-    count = ceil(num / 4);
+//    double num = count;
+//    count = ceil(num / 4);
+    count = (count / 4) + ((count % 4) != 0);
     if (count == 0) {count = 1; }
     printf("%s%d\n", "Total pages are ", count);
 //    printf("%s%d\n", "Start in count page is ", start);

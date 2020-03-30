@@ -23,6 +23,8 @@ PCB* makePCB() {  //creat node
 
 void terminatePCB(PCB* pcb){
 
+    printf("%s\n", "BEFORE frame number in pageTABLE is cleared");
+
     for (int i = 0; i < 10; i++) {
         int frameNumber = pcb->pageTable[i];
         if (frameNumber != -999) {
@@ -30,11 +32,13 @@ void terminatePCB(PCB* pcb){
                 ram[frameNumber*4 + j] = NULL;
             }
         }
+    }
 
-    }
-    for (int i = 0; i < 40; i++){
-        printf("%s\n", ram[i]);
-    }
+    printf("%s\n", "frame number in pageTABLE is cleared");
+//    for (int i = 0; i < 40; i++){
+//        printf("%s\n", ram[i]);
+//    }
+
 
     // Remove from pcb table
     for (int i = 0; i < 10; i++) {
@@ -42,10 +46,14 @@ void terminatePCB(PCB* pcb){
             pcbTable[i] = NULL;
         }
     }
+    printf("Removed from pcb table\n");
 
     int fileNumber = pcb->pid;
+    pcb = NULL;
+    printf("Put pcb null\n");
 
     free(pcb);
+    printf("Freed pcb\n");
 
 //    char* filename = pcb->filename;
     printf("%s%d\n", "file name is ", fileNumber);
