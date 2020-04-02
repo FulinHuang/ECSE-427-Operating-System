@@ -27,6 +27,7 @@ CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../memorymanager.c
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../pcb.h
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../ram.h
 
+CMakeFiles/Assignmen3.dir/pcb.c.o: ../kernel.h
 CMakeFiles/Assignmen3.dir/pcb.c.o: ../pcb.c
 CMakeFiles/Assignmen3.dir/pcb.c.o: ../pcb.h
 CMakeFiles/Assignmen3.dir/pcb.c.o: ../ram.h

@@ -6,39 +6,35 @@
 
 #IncludeRegexTransform: 
 
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/cpu.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
 pcb.h
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
-stdbool.h
--
 
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.c
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/memorymanager.c
+stdlib.h
+-
+stdio.h
+-
+string.h
+-
+pcb.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
+ram.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/ram.h
+kernel.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
+
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.c
 stdio.h
 -
 stdlib.h
 -
-shell.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shell.h
+pcb.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
 ram.h
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/ram.h
-pcb.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
-cpu.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/cpu.h
 kernel.h
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
-memorymanager.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/memorymanager.h
-
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h
-pcb.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
-
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/memorymanager.h
-stdio.h
--
-pcb.h
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
 
 /Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/pcb.h
 stdio.h
@@ -49,6 +45,4 @@ stdio.h
 -
 stdbool.h
 -
-
-/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/shell.h
 

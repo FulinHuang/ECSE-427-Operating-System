@@ -4,6 +4,12 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include <stdbool.h>
+
+char prompt[100] = "$ \0";
+
+
 
 int shellUI()
 {
@@ -13,18 +19,39 @@ int shellUI()
 
     shell_memory_initialize();
 
-    while (!feof(stdin))
-    {
-        printf("$ ");
-        fflush(stdout);
+//    while (!feof(stdin))
+//    {
+//        printf("$ ");
+//        fflush(stdout);
+//
+//        char *line = NULL;
+//        size_t linecap = 0;
+//        if (getline(&line, &linecap, stdin) == -1)
+//            break;
+//
+//        (void)interpret(line);
+//        free(line);
+//    }
+
+    bool cond  = true;
+    while (1) {
 
         char *line = NULL;
         size_t linecap = 0;
-        if (getline(&line, &linecap, stdin) == -1)
-            break;
+        if (cond) {
+            printf("%s", prompt);
+        }
+
+        getline(&line, &linecap, stdin);
+        if (!isatty(fileno(stdin)) && !feof(stdin)){
+            printf("%s", prompt);
+            printf("%s",line);
+            cond = false;
+        }
 
         (void)interpret(line);
         free(line);
+
     }
 
     shell_memory_destory();

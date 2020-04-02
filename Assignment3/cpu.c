@@ -34,7 +34,6 @@ bool getQuitProgram() {
 
 int run(int quanta) {
     cpu.quanta = quanta;
-    printf("%s\n", "Running quanta...");
 
     while (cpu.quanta >= 0 && cpu.offset < 4) {
 
@@ -43,13 +42,11 @@ int run(int quanta) {
         }
         cpu.quanta--;
 
-        printf("%s%d\n", "Read from position ", cpu.IP+cpu.offset);
         if (ram[cpu.IP+cpu.offset] == NULL) {
-            printf("Break because of null!\n");
+
             return -1;      //terminate code
         }
         strcpy(cpu.IR, ram[cpu.IP+cpu.offset]);
-        printf("%s\n", ram[cpu.IP+cpu.offset]);
         cpu.offset++;
 
         setQuitProgram(false);

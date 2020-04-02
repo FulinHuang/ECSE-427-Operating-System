@@ -1,6 +1,7 @@
 set x 10
 run script2.txt
 set montreal bobbie asdf
+
 print montreal
 help 
 print x

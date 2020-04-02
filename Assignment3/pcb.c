@@ -13,17 +13,12 @@ PCB* makePCB() {  //creat node
         return NULL;
     }
     else {
-//        pcb->PC = start;
-//        pcb->start = 0;
-//        pcb->end = 0;
 
         return pcb;
     }
 }
 
 void terminatePCB(PCB* pcb){
-
-    printf("%s\n", "BEFORE frame number in pageTABLE is cleared");
 
     for (int i = 0; i < 10; i++) {
         int frameNumber = pcb->pageTable[i];
@@ -34,33 +29,20 @@ void terminatePCB(PCB* pcb){
         }
     }
 
-    printf("%s\n", "frame number in pageTABLE is cleared");
-//    for (int i = 0; i < 40; i++){
-//        printf("%s\n", ram[i]);
-//    }
-
-
     // Remove from pcb table
     for (int i = 0; i < 10; i++) {
         if (pcbTable[i] == pcb) {
             pcbTable[i] = NULL;
         }
     }
-    printf("Removed from pcb table\n");
 
     int fileNumber = pcb->pid;
     pcb = NULL;
-    printf("Put pcb null\n");
 
     free(pcb);
-    printf("Freed pcb\n");
-
-//    char* filename = pcb->filename;
-    printf("%s%d\n", "file name is ", fileNumber);
     char cpCommand[50];
     sprintf(cpCommand, "rm %s%d", "BackingStore/", fileNumber);
     system(cpCommand);
-    printf("File REMOVED\n");
 
 
     /**
