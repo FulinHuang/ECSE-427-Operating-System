@@ -119,7 +119,7 @@ int readFile (char *fileName) {
         for (a = 0; line[a] == ' ' && a < MAX_NUM-1; a++);
         if (strcmp(line, "\n") != 0) {
 
-            if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0){
+            if (strcmp(line, "quit") == 0 ||strcmp(line, "quit\n") == 0 || strcmp(line, "quit\r\n") == 0){
                 readFromFile = true;
                 fclose(p);
                 readFromFile = false;
