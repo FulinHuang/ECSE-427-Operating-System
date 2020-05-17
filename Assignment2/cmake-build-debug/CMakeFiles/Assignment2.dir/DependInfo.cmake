@@ -1,0 +1,26 @@
+# The set of languages for which implicit dependencies are needed:
+set(CMAKE_DEPENDS_LANGUAGES
+  "C"
+  )
+# The set of files for implicit dependencies of each language:
+set(CMAKE_DEPENDS_CHECK_C
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cpu.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/cpu.c.o"
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/interpreter.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/interpreter.c.o"
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/kernel.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/kernel.c.o"
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/pcb.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/pcb.c.o"
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/ram.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/ram.c.o"
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/shell.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/shell.c.o"
+  "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/shellmemory.c" "/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/cmake-build-debug/CMakeFiles/Assignment2.dir/shellmemory.c.o"
+  )
+set(CMAKE_C_COMPILER_ID "AppleClang")
+
+# The include file search paths:
+set(CMAKE_C_TARGET_INCLUDE_PATH
+  )
+
+# Targets to which this target links.
+set(CMAKE_TARGET_LINKED_INFO_FILES
+  )
+
+# Fortran module output directory.
+set(CMAKE_Fortran_TARGET_MODULE_DIR "")

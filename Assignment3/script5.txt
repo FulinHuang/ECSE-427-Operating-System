@@ -1,0 +1,5 @@
+set x 10
+print x 
+run script2.txt 
+run script3.txt
+quit 

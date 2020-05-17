@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/ram.c
+stdio.h
+-
+string.h
+-
+stdbool.h
+-
+ram.h
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/ram.h
+
+/Users/Huang/Desktop/ECSE_427/Assignment/Assignment2/ram.h
+stdio.h
+-
+stdbool.h
+-
+

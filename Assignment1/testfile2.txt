@@ -1,0 +1,7 @@
+help
+set abc abcd
+set bcd bcde
+print bcd
+set abc bcde
+print                   abc
+quit
