@@ -1,7 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <dirent.h>
-#include <errno.h>
 
 #include "shell.h"
 #include "ram.h"
@@ -22,32 +20,7 @@ int kernel() {
     return error;
 }
 
-void boot() {
 
-    // Initialize every cell of the array to NULL
-    for (int i = 0; i < BUFFER; i++) {
-        ram[i] = NULL;
-    }
-
-    // Delete the old backing store directory and create a new directory
-    if (opendir("BackingStore")) {
-        system("rmdir BackingStore");
-        system("mkdir BackingStore");
-    }
-    else if(ENOENT == errno) {  //No Backing Store exists
-        system("mkdir BackingStore");
-    }
-
-}
-
-int main() {
-    int error = 0;
-    boot();
-    error = kernel();
-
-    return error;
-
-}
 
 PCB* myinit(char *filename){
 

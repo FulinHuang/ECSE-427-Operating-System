@@ -15,6 +15,8 @@ typedef struct Ready {
 extern Ready *head;
 extern Ready *tail;
 
+int kernel();
+
 PCB* pcbTable[10];
 
 PCB* myinit(char *filename);

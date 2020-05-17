@@ -96,6 +96,9 @@
 		<Unit filename="/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/kernel.h">
 			<Option target="Assignmen3"/>
 		</Unit>
+		<Unit filename="/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/main.c">
+			<Option target="Assignmen3"/>
+		</Unit>
 		<Unit filename="/Users/Huang/Desktop/ECSE_427/Assignment/Assignment3/memorymanager.c">
 			<Option target="Assignmen3"/>
 		</Unit>

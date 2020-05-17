@@ -22,6 +22,11 @@ CMakeFiles/Assignmen3.dir/kernel.c.o: ../pcb.h
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../ram.h
 CMakeFiles/Assignmen3.dir/kernel.c.o: ../shell.h
 
+CMakeFiles/Assignmen3.dir/main.c.o: ../kernel.h
+CMakeFiles/Assignmen3.dir/main.c.o: ../main.c
+CMakeFiles/Assignmen3.dir/main.c.o: ../pcb.h
+CMakeFiles/Assignmen3.dir/main.c.o: ../ram.h
+
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../kernel.h
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../memorymanager.c
 CMakeFiles/Assignmen3.dir/memorymanager.c.o: ../pcb.h

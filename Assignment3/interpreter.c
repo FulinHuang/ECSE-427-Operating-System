@@ -137,11 +137,10 @@ int runScript(const char *path)
 
         int status = interpret(line);
         free(line);
-        if (status != 0 && status != 2)
-        {
-            break;
-            return status;
-        }
+//        if (status != 0 && status != 2)
+//        {
+//            break;
+//        }
     }
     fclose(file);
     in_file_flag = enter_flag_status;

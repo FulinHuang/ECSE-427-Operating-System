@@ -204,6 +204,33 @@ kernel.c.s:
 	$(MAKE) -f CMakeFiles/Assignmen3.dir/build.make CMakeFiles/Assignmen3.dir/kernel.c.s
 .PHONY : kernel.c.s
 
+main.o: main.c.o
+
+.PHONY : main.o
+
+# target to build an object file
+main.c.o:
+	$(MAKE) -f CMakeFiles/Assignmen3.dir/build.make CMakeFiles/Assignmen3.dir/main.c.o
+.PHONY : main.c.o
+
+main.i: main.c.i
+
+.PHONY : main.i
+
+# target to preprocess a source file
+main.c.i:
+	$(MAKE) -f CMakeFiles/Assignmen3.dir/build.make CMakeFiles/Assignmen3.dir/main.c.i
+.PHONY : main.c.i
+
+main.s: main.c.s
+
+.PHONY : main.s
+
+# target to generate assembly for a file
+main.c.s:
+	$(MAKE) -f CMakeFiles/Assignmen3.dir/build.make CMakeFiles/Assignmen3.dir/main.c.s
+.PHONY : main.c.s
+
 memorymanager.o: memorymanager.c.o
 
 .PHONY : memorymanager.o
@@ -357,6 +384,9 @@ help:
 	@echo "... kernel.o"
 	@echo "... kernel.i"
 	@echo "... kernel.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 	@echo "... memorymanager.o"
 	@echo "... memorymanager.i"
 	@echo "... memorymanager.s"

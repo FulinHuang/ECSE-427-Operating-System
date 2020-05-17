@@ -7,6 +7,7 @@ file(REMOVE_RECURSE
   "CMakeFiles/Assignmen3.dir/kernel.c.o"
   "CMakeFiles/Assignmen3.dir/cpu.c.o"
   "CMakeFiles/Assignmen3.dir/memorymanager.c.o"
+  "CMakeFiles/Assignmen3.dir/main.c.o"
   "Assignmen3.pdb"
   "Assignmen3"
 )
